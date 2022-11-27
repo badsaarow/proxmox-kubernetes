@@ -14,12 +14,12 @@ bind_listen_ipv4:
   - 10.0.0.1
 bind_recursion: true
 bind_zone_domains:
-  - name: sd-51798.dy2k.io
+  - name: hci.kr
     networks:
       - '10.0.0'
     name_servers:
-      - ns1.sd-51798.dy2k.io.
-      - ns2.sd-51798.dy2k.io.
+      - ns1.hci.kr.
+      - ns2.hci.kr.
     hostmaster_email: admin
     hosts:
       - name: ns1

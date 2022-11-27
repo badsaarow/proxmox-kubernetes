@@ -1,16 +1,9 @@
 terraform {
-  backend "s3" {
-    bucket  = "proxmox-kubernetes"
-    key     = "terraform/terraform.tfstate"
-    region  = "ap-southeast-1"
-    profile = "dy2k"
-    encrypt = true
-  }
-
+  required_version = ">= 1.1.0"
   required_providers {
     proxmox = {
-      source  = "ondrejsika/proxmox"
-      version = "2020.9.21"
+      source  = "telmate/proxmox"
+      version = ">= 2.9.5"
     }
   }
 }
@@ -18,18 +11,27 @@ terraform {
 provider "proxmox" {
   pm_tls_insecure = true
   pm_api_url      = yamldecode(data.local_file.secrets.content).pm_api_url
-  pm_user         = yamldecode(data.local_file.secrets.content).pm_user
-  pm_password     = yamldecode(data.local_file.secrets.content).pm_password
+  pm_api_token_id = yamldecode(data.local_file.secrets.content).pm_api_token_id
+  pm_api_token_secret = yamldecode(data.local_file.secrets.content).pm_api_token_secret
+  # pm_user         = yamldecode(data.local_file.secrets.content).pm_user
+  # pm_password     = yamldecode(data.local_file.secrets.content).pm_password
+  #  curl -H "Authorization: PVEAPIToken=terraform-prov@pve!terraform=ecf4b2b7-3b1f-40e2-ab0f-012daf1f894c" https://hci.int2.gaamtech.kro.kr:8006/api2/json
+
+  pm_otp = ""
+  pm_debug      = true
+  pm_log_enable = true
+  pm_log_file   = "terraform-plugin-proxmox.log"
+  pm_log_levels = {
+    _default    = "debug"
+    _capturelog = ""
+  }
 }
 
 provider "tls" {
-  version = "~> 2.1"
 }
 
 provider "random" {
-  version = "~> 2.2"
 }
 
 provider "local" {
-  version = "~> 1.4"
 }

@@ -51,3 +51,8 @@ pip-selfcheck.json
 # Anisble
 *.retry
 .ansible_secret.yml
+terraform/.terraform.lock.hcl
+terraform/id_rsa
+terraform/id_rsa.pub
+.gitignore
+*.log

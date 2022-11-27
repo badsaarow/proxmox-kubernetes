@@ -47,6 +47,7 @@ openssl rand -base64 24
 
 # Create a RSA ssh key in PEM format with comment and file path
 ssh-keygen -t rsa -b 4096 -N "" -C "$USERNAME@$DOMAIN" -m pem -f "$PRIVATE_KEY"
+ssh-keygen -t rsa -b 4096 -N "" -C "terraform-prov@pve" -m pem -f terraform-prov-rsa
 ```
 
 For the full list of required passwords and SSH keys, you may refer to the below sample configuration.
@@ -64,12 +65,12 @@ root_password: <root_password>
 user_password: <user_password>
 # Key used by Terraform and Ansible to login to bastion host to execute tasks
 ssh_key: |
-  -----BEGIN RSA PRIVATE KEY-----
-  -----END RSA PRIVATE KEY-----
+-----BEGIN RSA PRIVATE KEY-----
+-----END RSA PRIVATE KEY-----
 # Key used by the default Terraform sudo user among all provisioned hosts
 terraform_key: |
-  -----BEGIN RSA PRIVATE KEY-----
-  -----END RSA PRIVATE KEY-----
+-----BEGIN RSA PRIVATE KEY-----
+-----END RSA PRIVATE KEY-----
 ```
 
 Make sure the bastion host has the terraform user and `terraform_key` authorized with `ssh_key`. Otherwise, use the first gateway host as the bastion host and configure the public IP in your DNS service provider. You also need to ensure the `ssh_key` is your default key in `~/.ssh/id_rsa` or specify the location in the SSH command of `ansible/group_vars/*.yml`.
@@ -83,7 +84,7 @@ LXC [containers](https://pve.proxmox.com/wiki/Linux_Container) are used to creat
 pveam update
 
 # Download the ubuntu container template
-pveam download local ubuntu-20.04-standard_20.04-1_amd64.tar.gz
+pveam download local ubuntu-22.04-standard_22.04-1_amd64.tar.zst
 ```
 
 ## Cloud-init Template
@@ -92,13 +93,13 @@ Virtual machines provisioned are initialized using [Cloud-init](https://pve.prox
 
 ```bash
 # Download the ubuntu cloud image
-wget http://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.img
+wget http://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img
 
 # Create a new VM with ID 9000
 qm create 9000 --memory 2048 --net0 virtio,bridge=vmbr0
 
 # Import the downloaded disk to local storage with qcow2 format
-qm importdisk 9000 focal-server-cloudimg-amd64.img local --format qcow2
+qm importdisk 9000 jammy-server-cloudimg-amd64.img local --format qcow2
 
 # Attach the new disk to the VM as scsi drive
 qm set 9000 --scsihw virtio-scsi-pci --scsi0 local:9000/vm-9000-disk-0.qcow2
@@ -119,6 +120,25 @@ qm template 9000
 ## Get Started
 
 Provision all the machines using Terraform.
+- https://github.com/Telmate/terraform-provider-proxmox/blob/master/docs/index.md
+
+Create a new role for the future terraform user.
+Create the user "terraform-prov@pve"
+Add the TERRAFORM-PROV role to the terraform-prov user
+
+```bash
+pveum role add TerraformProv -privs "VM.Allocate VM.Clone VM.Config.CDROM VM.Config.CPU VM.Config.Cloudinit VM.Config.Disk VM.Config.HWType VM.Config.Memory VM.Config.Network VM.Config.Options VM.Monitor VM.Audit VM.PowerMgmt Datastore.AllocateSpace Datastore.Audit"
+pveum role modify TerraformProv -privs "VM.Allocate VM.Clone VM.Config.CDROM VM.Config.CPU VM.Config.Cloudinit VM.Config.Disk VM.Config.HWType VM.Config.Memory VM.Config.Network VM.Config.Options VM.Monitor VM.Audit VM.PowerMgmt Datastore.AllocateSpace Datastore.Audit"
+pveum user add terraform-prov@pve --password gaam123$%
+pveum aclmod / -user terraform-prov@pve -role TerraformProv
+
+```
+
+When make API Token, should uncheck **Privilege Segregation**
+```
+export PM_USER="terraform-prov@pve"
+export PM_PASS="password"
+```
 
 ```bash
 # Navigate to the Terraform directory
@@ -128,7 +148,9 @@ cd terraform
 terraform init
 
 # Set the one-time password for Proxmox API authentication
-export PM_OTP=xxxxx
+export PM_OTP=""
+export PM_API_TOKEN_ID="terraform-prov@pve!terraform"
+export PM_API_TOKEN_SECRET="3da67423-d40a-4265-85d4-432ee4248839"
 
 # Check the resources to be created (optional)
 terraform plan
@@ -144,8 +166,8 @@ Configure the Kubernetes cluster using Ansible with or without tags.
 cd ansible
 
 # Run the Ansible kubernetes playbook on inventory file
-ansible-playbook -i inventories/sd-51798 kubernetes.yml
+ansible-playbook -i inventories/hci kubernetes.yml
 
 # Re-run playbook with tags if necessary (gateway/named/loadbalancer/common/runtime/kubeadm)
-ansible-playbook -i inventories/sd-51798 kubernetes.yml -t <tags>
+ansible-playbook -i inventories/hci kubernetes.yml -t <tags>
 ```

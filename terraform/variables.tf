@@ -1,13 +1,11 @@
 variable "common" {
   type = map(string)
   default = {
-    bastion_host  = "ubuntu.dy2k.io"
-    os_template   = "local:vztmpl/ubuntu-20.04-standard_20.04-1_amd64.tar.gz"
-    os_type       = "ubuntu"
+    bastion_host  = "proxy.hci.kr"
     clone         = "ci-ubuntu-template"
-    search_domain = "sd-51798.dy2k.io"
-    target_node   = "sd-51798"
-    nameserver    = "10.0.0.1"
+    target_node   = "hci-internal-2"
+    os_template   = "local:vztmpl/ubuntu-22.04-standard_22.04-1_amd64.tar.zst"
+    os_type       = "ubuntu"
   }
 }
 
@@ -33,7 +31,8 @@ variable "gateways" {
           gw     = "62.210.0.1"
           hwaddr = "52:54:00:00:bc:0b"
         }
-    ] },
+      ]
+    }
     gateway2 = {
       id     = 102
       cores  = 2
