@@ -53,8 +53,8 @@ resource "proxmox_vm_qemu" "kube-worker" {
   # cipassword   = "**********" # un-comment after creation
 
   sshkeys = join("", [
-    data.tls_public_key.ssh.public_key_openssh,
-    data.tls_public_key.vm_terraform.public_key_openssh
+    data.tls_public_key.bastion.public_key_openssh,
+    data.tls_public_key.vm.public_key_openssh
   ])
 
   depends_on = [
@@ -65,17 +65,17 @@ resource "proxmox_vm_qemu" "kube-worker" {
     type     = "ssh"
     host                = each.value.ip
     user                = "terraform-prov"
-    private_key         = data.tls_public_key.vm_terraform.private_key_pem
-    bastion_host        = var.common.bastion_host
-    bastion_private_key = data.tls_public_key.ssh.private_key_pem
+    private_key         = data.tls_public_key.vm.private_key_pem
+    bastion_host        = yamldecode(data.local_file.secrets.content).bastion_host
+    bastion_private_key = data.tls_public_key.bastion.private_key_pem
   }
 
   provisioner "remote-exec" {
     inline = [
       "sudo usermod --password $(openssl passwd -1 ${yamldecode(data.local_file.secrets.content).root_password}}) root",
       "ssh-keygen -b 2048 -t rsa -f ~/.ssh/id_rsa -q -N \"\"",
-      "echo \"${data.tls_public_key.vm_terraform.private_key_pem}\" > ~/.ssh/id_rsa",
-      "echo \"${data.tls_public_key.vm_terraform.public_key_openssh}\" > ~/.ssh/id_rsa.pub",
+      "echo \"${data.tls_public_key.vm.private_key_pem}\" > ~/.ssh/id_rsa",
+      "echo \"${data.tls_public_key.vm.public_key_openssh}\" > ~/.ssh/id_rsa.pub",
     ]
   }
 }

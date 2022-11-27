@@ -55,6 +55,8 @@ For the full list of required passwords and SSH keys, you may refer to the below
 ```yaml
 # Proxmox API host URL
 pm_api_url: https://<api_host>:8006/api2/json
+pm_api_token_id: <token>
+pm_api_token_secret: <secret>
 # Proxmox user (e.g. root@pam)
 pm_user: <api_user>
 # Proxmox password
@@ -63,17 +65,19 @@ pm_password: <api_password>
 root_password: <root_password>
 # Cloud-init user (i.e. terraform) password
 user_password: <user_password>
+# Bastion host (i.e. proxy.hci.kr) name
+bastion_host: <bastion_host>
 # Key used by Terraform and Ansible to login to bastion host to execute tasks
-ssh_key: |
+bastion_private_key: |
 -----BEGIN RSA PRIVATE KEY-----
 -----END RSA PRIVATE KEY-----
 # Key used by the default Terraform sudo user among all provisioned hosts
-terraform_key: |
+terraform_private_key: |
 -----BEGIN RSA PRIVATE KEY-----
 -----END RSA PRIVATE KEY-----
 ```
 
-Make sure the bastion host has the terraform user and `terraform_key` authorized with `ssh_key`. Otherwise, use the first gateway host as the bastion host and configure the public IP in your DNS service provider. You also need to ensure the `ssh_key` is your default key in `~/.ssh/id_rsa` or specify the location in the SSH command of `ansible/group_vars/*.yml`.
+Make sure the bastion host has the terraform user and `terraform_private_key` authorized with `bastion_private_key`. Otherwise, use the first gateway host as the bastion host and configure the public IP in your DNS service provider. You also need to ensure the `bastion_private_key` is your default key in `~/.ssh/id_rsa` or specify the location in the SSH command of `ansible/group_vars/*.yml`.
 
 ## Container Template
 

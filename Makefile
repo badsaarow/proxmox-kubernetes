@@ -1,3 +1,16 @@
+# Makefile for setup proxmox
+
+## local ip - $(PVE1_IP)
+# PVE1_IP=hci.ext1.gaamtech.kro.kr
+# PVE2_IP=hci.ext2.gaamtech.kro.kr
+# PVE3_IP=hci.ext3.gaamtech.kro.kr
+
+PVE1_IP=hci.int1.gaamtech.kro.kr
+PVE2_IP=hci.int2.gaamtech.kro.kr
+PVE3_IP=hci.int3.gaamtech.kro.kr
+
+USER=terraform-prov
+PASSWD="gaam123$$%"
 
 # By default, Makefile targets are "file targets" - they are used to build files from other files. Make assumes its target is a file, and this makes writing Makefiles relatively easy:
 # In terms of Make, a phony target is simply a target that is always out-of-date, so whenever you ask make <phony_target>, it will run, independent from the state of the file system. Some common make targets that are often phony are: all, install, clean, distclean, TAGS, info, check.
