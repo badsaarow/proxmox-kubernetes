@@ -4,7 +4,7 @@ resource "proxmox_lxc" "gateway" {
   features {
     nesting = true
   }
-  ostemplate = var.common.os_template # comment after creation
+  ostemplate = var.common.os_template
   ostype     = var.common.os_type
 
   cores      = each.value.cores
@@ -28,19 +28,18 @@ resource "proxmox_lxc" "gateway" {
   swap     = 2048
   onboot   = true
   pool = "admin-pool"
-  password = yamldecode(data.local_file.secrets.content).root_password # comment after creation
+  password = yamldecode(data.local_file.secrets.content).root_password
 
 // Terraform will crash without rootfs defined
   rootfs   {
       storage = "local"
-      size = "${each.value.disk}G" # comment after creation
+      size = "${each.value.disk}G"
   }
-  ssh_public_keys = join("", [                              # comment after creation
-    data.tls_public_key.bastion.public_key_openssh,            # comment after creation
-    data.tls_public_key.vm.public_key_openssh # comment after creation
-  ])                                                        # comment after creation
-  start = true                                              # comment after creation
-  # start        = false # un-comment after creation
+  ssh_public_keys = join("", [
+    data.tls_public_key.bastion.public_key_openssh,
+    data.tls_public_key.vm.public_key_openssh
+  ])
+  start = true
   unprivileged = true
   target_node  = var.common.target_node
 

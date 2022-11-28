@@ -1,5 +1,6 @@
 ---
-- hosts: proxmox
+- name: Create Group and Role
+  hosts: proxmox
   remote_user: root
   tasks:
     - name: Create Develop Pool for API Access
@@ -9,3 +10,10 @@
         pveum user modify root@pam -group admin
         pveum pool add admin-pool --comment "Admin pool"
         pveum acl modify /pool/admin-pool/ -group admin -role PVEAdmin
+    - name: Create k8s Pool
+      shell: |
+        pveum group add k8s -comment "k8s"
+        pveum acl modify / -group k8s -role TerraformProv
+        pveum user modify terraform-prov@pve -group k8s
+        pveum pool add k8s-pool --comment "k8s pool"
+        pveum acl modify /pool/k8s-pool/ -group k8s -role TerraformProv

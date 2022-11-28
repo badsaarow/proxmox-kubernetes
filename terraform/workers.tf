@@ -50,7 +50,7 @@ resource "proxmox_vm_qemu" "kube-worker" {
 
   ipconfig0  = "ip=${each.value.cidr},gw=${each.value.gw}"
   ciuser     = "terraform-prov"
-  cipassword = yamldecode(data.local_file.secrets.content).user_password # comment after creation
+  cipassword = yamldecode(data.local_file.secrets.content).user_password
   # cipassword   = "**********" # un-comment after creation
 
   sshkeys = join("", [

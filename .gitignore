@@ -1,5 +1,5 @@
 # terraform
-.terraform_secret.yaml
+.terraform_secret*.yaml
 
 # Local .terraform directories
 **/.terraform/*
@@ -58,3 +58,4 @@ terraform/id_rsa.pub
 *.log
 terraform/root_rsa
 terraform/root_rsa.pub
+.env
