@@ -1,0 +1,11 @@
+---
+- hosts: proxmox
+  remote_user: root
+  tasks:
+    - name: Create Develop Pool for API Access
+      shell: |
+        pveum group add admin -comment "Dev Team"
+        pveum acl modify / -group admin -role Administrator
+        pveum user modify root@pam -group admin
+        pveum pool add admin-pool --comment "Admin pool"
+        pveum acl modify /pool/admin-pool/ -group admin -role PVEAdmin

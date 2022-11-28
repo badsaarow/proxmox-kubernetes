@@ -1,0 +1,8 @@
+---
+- name: show fact gathering
+  hosts: all
+  gather_facts: yes
+  tasks:
+  - name: show all facts
+    debug:
+      msg: run me agin and see if you get here

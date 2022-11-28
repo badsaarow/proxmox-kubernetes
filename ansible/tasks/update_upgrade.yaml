@@ -1,0 +1,15 @@
+---
+- name: Update and Upgrade apt
+  hosts: all
+  gather_facts: yes
+  tasks:
+  - name: apt update
+    ansible.builtin.apt:
+      update_cache: yes
+  - name: Update all packages to their latest version
+    ansible.builtin.apt:
+      name: "*"
+      state: latest
+      autoremove: yes
+      autoclean: yes
+

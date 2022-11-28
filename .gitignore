@@ -56,3 +56,5 @@ terraform/id_rsa
 terraform/id_rsa.pub
 .gitignore
 *.log
+terraform/root_rsa
+terraform/root_rsa.pub

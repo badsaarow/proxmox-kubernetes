@@ -1,0 +1,36 @@
+---
+- name: Install base cli tools
+  hosts: all
+  become: true
+  gather_facts: yes
+  tasks:
+  - name: apt update
+    ansible.builtin.apt:
+      update_cache: yes
+      dpkg_options: 'force-confold,force-confdef'
+  - name: apt install
+    ansible.builtin.apt:
+      pkg:
+      - ca-certificates
+      - curl
+      - gnupg
+      - lsb-release
+      - sudo
+      - curl
+      - wget
+      - git
+      - zsh
+      - build-essential
+      - ca-certificates
+      - lsb-release
+      # install by apt before ansible
+      # - python-is-python3
+      # - pip
+      - net-tools
+      - network-manager
+      dpkg_options: 'fix-broken'
+      state: latest
+      fail_on_autoremove: yes
+
+  - name: update network interfaces
+    shell: echo "source /etc/network/interfaces.d/*" | tee >> /etc/network/interfaces

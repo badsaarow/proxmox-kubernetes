@@ -1,0 +1,12 @@
+---
+- name: Install Zero-tier
+  hosts: proxmox
+  # remote_user: root
+  become: true
+  gather_facts: yes
+  tasks:
+  - name: Install Zero-tier
+    shell: "curl -s https://install.zerotier.com | sh"
+
+
+

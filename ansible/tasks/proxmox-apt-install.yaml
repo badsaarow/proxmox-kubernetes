@@ -1,0 +1,47 @@
+---
+- name: Install base cli tools
+  hosts: proxmox
+  remote_user: root
+  gather_facts: yes
+  tasks:
+  - name: apt update
+    ansible.builtin.apt:
+      update_cache: yes
+      dpkg_options: 'force-confold,force-confdef'
+  - name: apt install
+    ansible.builtin.apt:
+      pkg:
+      - ca-certificates
+      - curl
+      - gnupg
+      - lsb-release
+      - sudo
+      - curl
+      - wget
+      - git
+      - zsh
+      - build-essential
+      - ca-certificates
+      - lsb-release
+      # install by apt before ansible
+      # - python-is-python3
+      # - pip
+      - net-tools
+      - ifupdown2
+      - network-manager
+      # proxmox's dpkg has no fix-broken  option
+      # dpkg_options: 'fix-broken'
+      state: latest
+      fail_on_autoremove: yes
+
+  - name: update network interfaces
+    shell: echo "source /etc/network/interfaces.d/*" | tee >> /etc/network/interfaces
+      # moved to Makefile
+      # echo "\n" > /etc/apt/source3s.list.d/pve-enterprise.list
+
+  - name: pveam update
+    shell: |
+      pveam update
+      pveam available
+      pveam download local ubuntu-22.04-standard_22.04-1_amd64.tar.zst
+

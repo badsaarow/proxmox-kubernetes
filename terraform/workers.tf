@@ -8,10 +8,12 @@ resource "proxmox_vm_qemu" "kube-worker" {
   balloon     = 0
   bios        = "seabios"
   clone       = var.common.clone
+  full_clone = false
+  clone_wait = 0
   vmid        = each.value.id
   memory      = each.value.memory
   cores       = each.value.cores
-  define_connection_info    = true
+  define_connection_info    = false
   force_create              = false
   hotplug                   = "network,disk,usb"
   kvm                       = true
@@ -29,7 +31,6 @@ resource "proxmox_vm_qemu" "kube-worker" {
   }
   network {
     model    = "virtio"
-    macaddr  = each.value.macaddr
     bridge   = "vmbr0"
     firewall = false
     link_down = false

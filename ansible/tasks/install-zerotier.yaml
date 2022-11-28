@@ -1,0 +1,10 @@
+---
+- name: Install ZeroTier
+  hosts: all
+  become: true
+  gather_facts: yes
+  tasks:
+  - name: Install Tailscale
+    shell: |
+      curl -fsSL https://tailscale.com/install.sh | sh
+      curl -s https://install.zerotier.com | sudo bash

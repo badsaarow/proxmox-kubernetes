@@ -1,0 +1,17 @@
+---
+- name: Change node1
+  hosts: node1
+  remote_user: root
+  become: true
+  gather_facts: yes
+  tasks:
+  - name: set node1
+    shell: hostname pve-node1
+- name: Change node2
+  hosts: node2
+  remote_user: root
+  become: true
+  gather_facts: yes
+  tasks:
+  - name: set node2
+    shell: hostname pve-node2

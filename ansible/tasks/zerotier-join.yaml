@@ -1,0 +1,16 @@
+---
+- name: Join Zero-tier network
+  hosts: all
+  vars:
+    zerotier_network_id: fill_here
+    zerotier_api_accesstoken: fill_here
+    zerotier_register_short_hostname: true
+  # remote_user: root
+  become: true
+  gather_facts: yes
+  tasks:
+  - name: Install Zero-tier
+    shell: "curl -s https://install.zerotier.com | sh"
+
+
+

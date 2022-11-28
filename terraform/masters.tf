@@ -9,6 +9,9 @@ resource "proxmox_vm_qemu" "kube-master" {
   agent       = 1
   # The template name to clone this vm from
   clone       = var.common.clone
+  define_connection_info = true
+  full_clone = false
+  clone_wait = 0
   vmid        = each.value.id
   memory      = each.value.memory
   cores       = each.value.cores
@@ -17,9 +20,8 @@ resource "proxmox_vm_qemu" "kube-master" {
   }
   network {
     model    = "virtio"
-    macaddr  = each.value.macaddr
     bridge   = "vmbr0"
-    firewall = true
+    firewall = false
   }
   disk {
     type         = "scsi"
@@ -56,6 +58,7 @@ resource "proxmox_vm_qemu" "kube-master" {
     type     = "ssh"
     host                = each.value.ip
     user                = "terraform-prov"
+    password            = yamldecode(data.local_file.secrets.content).root_password
     private_key         = data.tls_public_key.vm.private_key_pem
     bastion_host        = yamldecode(data.local_file.secrets.content).bastion_host
     bastion_private_key = data.tls_public_key.bastion.private_key_pem

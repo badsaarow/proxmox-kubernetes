@@ -1,0 +1,6 @@
+---
+- hosts: proxmox
+  remote_user: root
+  tasks:
+    - name: "Turn Off checking PVE Enterprise apt"
+      shell: true > /etc/apt/sources.list.d/pve-enterprise.list
