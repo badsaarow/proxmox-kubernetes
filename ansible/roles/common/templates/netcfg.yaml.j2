@@ -1,0 +1,11 @@
+# /etc/netplan/01-netcfg.yaml
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    ens18:
+      dhcp4: no
+      addresses: [10.10.108.2/24]
+      gateway4: 10.10.108.1
+      nameservers:
+        addresses: [8.8.8.8,8.8.4.4]

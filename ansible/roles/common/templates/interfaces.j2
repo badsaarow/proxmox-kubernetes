@@ -1,0 +1,44 @@
+# sudo vi /etc/network/interfaces
+# sudo vi /etc/sysctl.conf
+#net.ipv4.ip_forward=1
+#net.ipv6.conf.all.forwarding=1
+auto lo
+iface lo inet loopback
+
+# eno1 is my physical network adapter name.
+# Change 'enp3s0' *everywhere* in this file for your adapter name.
+auto enp3s0
+iface enp3s0 inet manual
+    post-up echo 1 > /proc/sys/net/ipv4/conf/eno1/proxy_arp
+
+# vmbr0 is your *public* network interface.
+# Change this to DHCP if appropriate for your network.
+auto vmbr0
+iface vmbr0 inet static
+    # This is the static *public* ip address and gateway:
+    address 192.168.123.64/24
+    gateway 192.168.123.1
+    bridge-ports enp3s0
+    bridge-stp off
+    bridge-fd 0
+    bridge-maxwait 0
+    post-up echo 1 > /proc/sys/net/ipv4/conf/vmbr0/proxy_arp
+    # Add additional public ip addresses if available:
+    ### post-up ip addr add 192.168.123.64/24 brd + dev enp3s0
+
+auto vmbr1
+iface vmbr1 inet static
+    # This is the static *private* subnet for containers
+    address 10.10.108.1/24
+    bridge_ports none
+    bridge_stp off
+    bridge_maxwait 0
+    bridge_fd 0
+    # On startup run the external firewall script
+    # to setup IP Masquerading and port forwards:
+    post-up /etc/firewall.sh
+    # post-up ip addr add 10.10.108.2/24 brd + dev enp3s0
+    # post-up iptables -t nat -A POSTROUTING -s '10.10.108.0/24' -o enp3s0 -j MASQUERADE
+    # post-down iptables -t nat -D POSTROUTING -s '10.10.108.0/24' -o enp3s0 -j MASQUERADE
+
+source /etc/network/interfaces.d/*
