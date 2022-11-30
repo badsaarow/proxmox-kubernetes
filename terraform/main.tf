@@ -15,7 +15,6 @@ provider "proxmox" {
   pm_api_token_secret = yamldecode(data.local_file.secrets.content).pm_api_token_secret
   # pm_user         = yamldecode(data.local_file.secrets.content).pm_user
   # pm_password     = yamldecode(data.local_file.secrets.content).pm_password
-  #  curl -H "Authorization: PVEAPIToken=terraform-prov@pve!terraform=ecf4b2b7-3b1f-40e2-ab0f-012daf1f894c" https://hci.int2.gaamtech.kro.kr:8006/api2/json
 
   pm_otp = ""
   pm_debug      = true

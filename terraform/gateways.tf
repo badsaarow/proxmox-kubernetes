@@ -25,6 +25,7 @@ resource "proxmox_lxc" "gateway" {
       type     = "veth"
     }
   }
+  searchdomain = var.common.search_domain
   swap     = 2048
   onboot   = true
   pool = "admin-pool"
@@ -44,8 +45,8 @@ resource "proxmox_lxc" "gateway" {
   target_node  = var.common.target_node
 
   connection {
-    type = "ssh"
-    host                = each.value.network[0].ip
+    type                = "ssh"
+    host                = each.value.network[1].ip
     user                = "root"
     password            = yamldecode(data.local_file.secrets.content).root_password
     private_key         = data.tls_public_key.vm.private_key_pem

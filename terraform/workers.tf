@@ -8,7 +8,7 @@ resource "proxmox_vm_qemu" "kube-worker" {
   balloon     = 0
   bios        = "seabios"
   clone       = var.common.clone
-  full_clone = false
+  full_clone  = false
   vmid        = each.value.id
   memory      = each.value.memory
   cores       = each.value.cores
@@ -51,7 +51,8 @@ resource "proxmox_vm_qemu" "kube-worker" {
   ciuser     = "terraform-prov"
   cipassword = yamldecode(data.local_file.secrets.content).user_password
   # cipassword   = "**********" # un-comment after creation
-
+  searchdomain = var.common.search_domain
+  nameserver   = var.common.nameserver
   sshkeys = join("", [
     data.tls_public_key.bastion.public_key_openssh,
     data.tls_public_key.vm.public_key_openssh
@@ -62,7 +63,7 @@ resource "proxmox_vm_qemu" "kube-worker" {
   ]
 
   connection {
-    type     = "ssh"
+    type                = "ssh"
     host                = each.value.ip
     user                = "terraform-prov"
     private_key         = data.tls_public_key.vm.private_key_pem

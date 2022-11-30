@@ -174,6 +174,11 @@ proxmox-destroy-template:
 	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"qm destroy 9002 && rm -rf /var/lib/vz/images/9002"'
 	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"qm destroy 9003 && rm -rf /var/lib/vz/images/9003"'
 
+.PHONY: proxmox-destroy-all
+proxmox-destroy-all:
+	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"qm destroy 9001 && rm -rf /var/lib/vz/images/9001"'
+	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"qm stop 3003 && qm stop 3002 && qm stop 3001 && qm stop 2003 && qm stop 2002 && qm stop 2001 && pct stop 1002 && pct stop 1001 && qm destroy --destroy-unreferenced-disks --purge true 3003 && qm destroy --destroy-unreferenced-disks --purge true 3002 && qm destroy --destroy-unreferenced-disks --purge true 3001 && qm destroy --destroy-unreferenced-disks --purge true 2003 && qm destroy --destroy-unreferenced-disks --purge true 2002 && qm destroy --destroy-unreferenced-disks --purge true 2001 && qm destroy --destroy-unreferenced-disks --purge true 1002 && qm destroy --destroy-unreferenced-disks --purge true 1001 "'
+	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"qm destroy 9003 && rm -rf /var/lib/vz/images/9003"'
 
 .PHONY: proxmox-down-lxd-template
 proxmox-down-lxd-template:

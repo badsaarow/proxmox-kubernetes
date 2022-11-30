@@ -146,25 +146,25 @@
 
 - name: Ensure kube config directory exists
   file:
-    path: /home/terraform/.kube
+    path: /home/terraform-prov/.kube
     state: directory
-    owner: terraform
-    group: terraform
+    owner: terraform-prov
+    group: terraform-prov
 
 - name: Copy admin.conf for Kubernetes control plane nodes
   copy:
     src: /etc/kubernetes/admin.conf
-    dest: /home/terraform/.kube/config
-    owner: terraform
-    group: terraform
+    dest: /home/terraform-prov/.kube/config
+    owner: terraform-prov
+    group: terraform-prov
     remote_src: yes
   when: kubeadm_join_status.stdout|int >= 1 and "masters" in group_names
 
 - name: Copy kubelet.conf for Kubernetes worker nodes
   copy:
     src: /etc/kubernetes/kubelet.conf
-    dest: /home/terraform/.kube/config
-    owner: terraform
-    group: terraform
+    dest: /home/terraform-prov/.kube/config
+    owner: terraform-prov
+    group: terraform-prov
     remote_src: yes
   when: kubeadm_join_status.stdout|int >= 1 and "workers" in group_names

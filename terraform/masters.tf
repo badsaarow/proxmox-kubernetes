@@ -4,7 +4,7 @@ resource "proxmox_vm_qemu" "kube-master" {
   name        = each.key
   target_node = var.common.target_node
   # The destination resource pool for the new VM
-  pool = "k8s-pool"
+  pool        = "k8s-pool"
   # Activate QEMU agent for this VM
   agent       = 1
   # The template name to clone this vm from
@@ -43,7 +43,8 @@ resource "proxmox_vm_qemu" "kube-master" {
   ciuser     = "terraform-prov"
   cipassword = yamldecode(data.local_file.secrets.content).user_password
   # cipassword   = "**********" # un-comment after creation
-
+  searchdomain = var.common.search_domain
+  nameserver   = var.common.nameserver
   sshkeys = join("", [
     data.tls_public_key.bastion.public_key_openssh,
     data.tls_public_key.vm.public_key_openssh
@@ -54,7 +55,7 @@ resource "proxmox_vm_qemu" "kube-master" {
   ]
 
   connection {
-    type     = "ssh"
+    type                = "ssh"
     host                = each.value.ip
     user                = "terraform-prov"
     password            = yamldecode(data.local_file.secrets.content).root_password
