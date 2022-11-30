@@ -29,7 +29,7 @@ change-password:
 	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"echo "$(USER):$(PASSWD)" | chpasswd"'
 
 define UPDATE_TF_USER
-pveum role modify TerraformProv -privs \"VM.Allocate VM.Clone VM.Config.CDROM VM.Config.CPU VM.Config.Cloudinit VM.Config.Disk VM.Config.HWType VM.Config.Memory VM.Config.Network VM.Config.Options VM.Monitor VM.Audit VM.PowerMgmt Datastore.AllocateSpace Datastore.Audit\" \
+pveum role modify TerraformProv -privs \"VM.Allocate VM.Console VM.Clone VM.Config.CDROM VM.Config.CPU VM.Config.Cloudinit VM.Config.Disk VM.Config.HWType VM.Config.Memory VM.Config.Network VM.Config.Options VM.Monitor VM.Audit VM.PowerMgmt Datastore.AllocateSpace Datastore.Audit\" \
 && pveum aclmod / -user terraform-prov@pve -role TerraformProv
 endef
 
@@ -120,8 +120,7 @@ proxmox-terraform-del:
 
 
 define CREATE_TEMPLATE_1
-wget http://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img \
-&& qm create $(VM_TEMPLATE_ID_1) --memory 2048 --net0 virtio,bridge=vmbr0 \
+qm create $(VM_TEMPLATE_ID_1) --memory 2048 --net0 virtio,bridge=vmbr0 \
 && qm importdisk $(VM_TEMPLATE_ID_1) jammy-server-cloudimg-amd64.img local --format qcow2 \
 && qm set $(VM_TEMPLATE_ID_1) --scsihw virtio-scsi-pci --scsi0 local:$(VM_TEMPLATE_ID_1)/vm-$(VM_TEMPLATE_ID_1)-disk-0.qcow2 \
 && qm set $(VM_TEMPLATE_ID_1) --ide2 local:cloudinit \
@@ -131,8 +130,7 @@ wget http://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.im
 endef
 
 define CREATE_TEMPLATE_2
-wget http://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img \
-&& qm create $(VM_TEMPLATE_ID_2) --memory 2048 --net0 virtio,bridge=vmbr0 \
+qm create $(VM_TEMPLATE_ID_2) --memory 2048 --net0 virtio,bridge=vmbr0 \
 && qm importdisk $(VM_TEMPLATE_ID_2) jammy-server-cloudimg-amd64.img local --format qcow2 \
 && qm set $(VM_TEMPLATE_ID_2) --scsihw virtio-scsi-pci --scsi0 local:$(VM_TEMPLATE_ID_2)/vm-$(VM_TEMPLATE_ID_2)-disk-0.qcow2 \
 && qm set $(VM_TEMPLATE_ID_2) --ide2 local:cloudinit \
@@ -142,8 +140,7 @@ wget http://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.im
 endef
 
 define CREATE_TEMPLATE_3
-wget http://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img \
-&& qm create $(VM_TEMPLATE_ID_3) --memory 2048 --net0 virtio,bridge=vmbr0 \
+qm create $(VM_TEMPLATE_ID_3) --memory 2048 --net0 virtio,bridge=vmbr0 \
 && qm importdisk $(VM_TEMPLATE_ID_3) jammy-server-cloudimg-amd64.img local --format qcow2 \
 && qm set $(VM_TEMPLATE_ID_3) --scsihw virtio-scsi-pci --scsi0 local:$(VM_TEMPLATE_ID_3)/vm-$(VM_TEMPLATE_ID_3)-disk-0.qcow2 \
 && qm set $(VM_TEMPLATE_ID_3) --ide2 local:cloudinit \
@@ -173,8 +170,9 @@ proxmox-create-template:
 
 .PHONY: proxmox-destroy-template
 proxmox-destroy-template:
-	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) \
-	bash -c '"qm destroy 9000"'
+	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"qm destroy 9001 && rm -rf /var/lib/vz/images/9001"'
+	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"qm destroy 9002 && rm -rf /var/lib/vz/images/9002"'
+	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"qm destroy 9003 && rm -rf /var/lib/vz/images/9003"'
 
 
 .PHONY: proxmox-down-lxd-template

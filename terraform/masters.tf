@@ -11,7 +11,6 @@ resource "proxmox_vm_qemu" "kube-master" {
   clone       = var.common.clone
   define_connection_info = true
   full_clone = false
-  clone_wait = 0
   vmid        = each.value.id
   memory      = each.value.memory
   cores       = each.value.cores

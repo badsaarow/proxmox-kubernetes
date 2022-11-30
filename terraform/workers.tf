@@ -9,11 +9,10 @@ resource "proxmox_vm_qemu" "kube-worker" {
   bios        = "seabios"
   clone       = var.common.clone
   full_clone = false
-  clone_wait = 0
   vmid        = each.value.id
   memory      = each.value.memory
   cores       = each.value.cores
-  define_connection_info    = false
+  define_connection_info    = true
   force_create              = false
   hotplug                   = "network,disk,usb"
   kvm                       = true
