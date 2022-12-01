@@ -18,9 +18,9 @@ proxmox-add-ssh-key:
 
 .PHONY: proxmox-add-user
 proxmox-add-user:
-	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"adduser --quiet --disabled-password --shell /bin/bash --home /home/$(USER) --ingroup "sudo" --gecos "User" $(USER); echo "$(USER):$(PASSWD)" | chpasswd"'
-	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"adduser --quiet --disabled-password --shell /bin/bash --home /home/$(USER) --ingroup "sudo" --gecos "User" $(USER); echo "$(USER):$(PASSWD)" | chpasswd"'
-	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"adduser --quiet --disabled-password --shell /bin/bash --home /home/$(USER) --ingroup "sudo" --gecos "User" $(USER); echo "$(USER):$(PASSWD)" | chpasswd"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"adduser --quiet --disabled-password --shell /bin/bash --home /home/$(USER) --ingroup "sudo" --gecos "User" $(USER); echo "$(USER):$(PASSWD)" | chpasswd"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"adduser --quiet --disabled-password --shell /bin/bash --home /home/$(USER) --ingroup "sudo" --gecos "User" $(USER); echo "$(USER):$(PASSWD)" | chpasswd"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"adduser --quiet --disabled-password --shell /bin/bash --home /home/$(USER) --ingroup "sudo" --gecos "User" $(USER); echo "$(USER):$(PASSWD)" | chpasswd"'
 
 .PHONY: change-password
 change-password:
@@ -39,11 +39,11 @@ proxmox-terraform-update:
 
 .PHONY: proxmox-terraform-add-id
 proxmox-terraform-add-id:
-	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) \
+	ssh-i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) \
 	bash -c '"adduser --quiet --disabled-password --shell /bin/bash --home /home/$(USER) --ingroup "sudo" --gecos "User" $(USER); echo "$(USER):$(PASSWD)" | chpasswd"'
-	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) \
+	ssh-i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) \
 	bash -c '"adduser --quiet --disabled-password --shell /bin/bash --home /home/$(USER) --ingroup "sudo" --gecos "User" $(USER); echo "$(USER):$(PASSWD)" | chpasswd"'
-	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) \
+	ssh-i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) \
 	bash -c '"adduser --quiet --disabled-password --shell /bin/bash --home /home/$(USER) --ingroup "sudo" --gecos "User" $(USER); echo "$(USER):$(PASSWD)" | chpasswd"'
 
 .PHONY: proxmox-terraform-copy-key
@@ -64,24 +64,24 @@ proxmox-copy-net-config:
 
 .PHONY: proxmox-off-pve-apt
 proxmox-off-pve-apt:
-	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"true > /etc/apt/sources.list.d/pve-enterprise.list"'
-	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"true > /etc/apt/sources.list.d/pve-enterprise.list"'
-	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"true > /etc/apt/sources.list.d/pve-enterprise.list"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"true > /etc/apt/sources.list.d/pve-enterprise.list"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"true > /etc/apt/sources.list.d/pve-enterprise.list"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"true > /etc/apt/sources.list.d/pve-enterprise.list"'
 
 .PHONY: proxmox-apt-upgrade
 proxmox-apt-upgrade:
-	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"apt-get update && apt-get upgrade -y"'
-	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"apt-get update && apt-get upgrade -y"'
-	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"apt-get update && apt-get upgrade -y"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"apt-get update && apt-get upgrade -y"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"apt-get update && apt-get upgrade -y"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"apt-get update && apt-get upgrade -y"'
 
 .PHONY: proxmox-init-ansible
 proxmox-init-ansible:
 # workaround for error - No module named 'distutils.cmd'
 # proxmox's python3.9 has no distutils
 # ansible needs python3 and pip3
-	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"apt-get install -y python3.9-distutils && curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python3 get-pip.py && pip3 install --ignore-installed ansible"'
-	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"apt-get install -y python3.9-distutils && curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python3 get-pip.py && pip3 install --ignore-installed ansible"'
-	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"apt-get install -y python3.9-distutils && curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python3 get-pip.py && pip3 install --ignore-installed ansible"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"apt-get install -y python3.9-distutils && curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python3 get-pip.py && pip3 install --ignore-installed ansible"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"apt-get install -y python3.9-distutils && curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python3 get-pip.py && pip3 install --ignore-installed ansible"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"apt-get install -y python3.9-distutils && curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python3 get-pip.py && pip3 install --ignore-installed ansible"'
 
 .PHONY: proxmox-apt-install
 proxmox-apt-install:
@@ -119,9 +119,6 @@ proxmox-terraform-del:
 	bash -c '"pveum user del terraform-prov@pve && pveum role del TerraformProv"'
 
 
-define WGET_CI_IMAGE
-wget http://cloud-images.ubuntu.com/jammy/current/$(CI_IMG)
-endef
 
 define CREATE_CLOUD_INIT
 qm destroy $(VM_ID) --destroy-unreferenced-disks --purge true \
@@ -142,8 +139,9 @@ qm destroy $(VM_ID) --destroy-unreferenced-disks --purge true \
 endef
 
 define CREATE_TEMPLATE_1
-qm create $(VM_TEMPLATE_ID_1) --memory 2048 --net0 virtio,bridge=vmbr0 \
-&& qm importdisk $(VM_TEMPLATE_ID_1) jammy-server-cloudimg-amd64.img local --format qcow2 \
+qm destroy $(VM_TEMPLATE_ID_1) --destroy-unreferenced-disks --purge true \
+&& qm create $(VM_TEMPLATE_ID_1) --memory 2048 --net0 virtio,bridge=vmbr0 \
+&& qm importdisk $(VM_TEMPLATE_ID_1)  $(CI_IMG) local --format qcow2 \
 && qm set $(VM_TEMPLATE_ID_1) --scsihw virtio-scsi-pci --scsi0 local:$(VM_TEMPLATE_ID_1)/vm-$(VM_TEMPLATE_ID_1)-disk-0.qcow2 \
 && qm set $(VM_TEMPLATE_ID_1) --ide2 local:cloudinit \
 && qm set $(VM_TEMPLATE_ID_1) --boot c --bootdisk scsi0 \
@@ -152,8 +150,9 @@ qm create $(VM_TEMPLATE_ID_1) --memory 2048 --net0 virtio,bridge=vmbr0 \
 endef
 
 define CREATE_TEMPLATE_2
-qm create $(VM_TEMPLATE_ID_2) --memory 2048 --net0 virtio,bridge=vmbr0 \
-&& qm importdisk $(VM_TEMPLATE_ID_2) jammy-server-cloudimg-amd64.img local --format qcow2 \
+qm destroy $(VM_TEMPLATE_ID_2) --destroy-unreferenced-disks --purge true \
+&& create $(VM_TEMPLATE_ID_2) --memory 2048 --net0 virtio,bridge=vmbr0 \
+&& qm importdisk $(VM_TEMPLATE_ID_2)  $(CI_IMG) local --format qcow2 \
 && qm set $(VM_TEMPLATE_ID_2) --scsihw virtio-scsi-pci --scsi0 local:$(VM_TEMPLATE_ID_2)/vm-$(VM_TEMPLATE_ID_2)-disk-0.qcow2 \
 && qm set $(VM_TEMPLATE_ID_2) --ide2 local:cloudinit \
 && qm set $(VM_TEMPLATE_ID_2) --boot c --bootdisk scsi0 \
@@ -162,8 +161,9 @@ qm create $(VM_TEMPLATE_ID_2) --memory 2048 --net0 virtio,bridge=vmbr0 \
 endef
 
 define CREATE_TEMPLATE_3
-qm create $(VM_TEMPLATE_ID_3) --memory 2048 --net0 virtio,bridge=vmbr0 \
-&& qm importdisk $(VM_TEMPLATE_ID_3) jammy-server-cloudimg-amd64.img local --format qcow2 \
+qm destroy $(VM_ID) --destroy-unreferenced-disks --purge true \
+&& qm create $(VM_TEMPLATE_ID_3) --memory 2048 --net0 virtio,bridge=vmbr0 \
+&& qm importdisk $(VM_TEMPLATE_ID_3)  $(CI_IMG) local --format qcow2 \
 && qm set $(VM_TEMPLATE_ID_3) --scsihw virtio-scsi-pci --scsi0 local:$(VM_TEMPLATE_ID_3)/vm-$(VM_TEMPLATE_ID_3)-disk-0.qcow2 \
 && qm set $(VM_TEMPLATE_ID_3) --ide2 local:cloudinit \
 && qm set $(VM_TEMPLATE_ID_3) --boot c --bootdisk scsi0 \
@@ -184,45 +184,50 @@ proxmox-set-local:
 	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) \
 	bash -c '"pvesm set local --content backup,images,iso,rootdir,snippets,vztmpl"'
 
+define WGET_CI_IMAGE
+rm -rf /root/$(CI_IMG).* \
+;wget http://cloud-images.ubuntu.com/jammy/current/$(CI_IMG)
+endef
+
 .PHONY: proxmox-create-ci
 proxmox-create-ci:
-## local -> pve: id_rsa, root_rsa, .env, *.sh
-## pve -> template: id_rsa, root_rsa, .env, *virt.sh
-	# scp -i $(TERRAFORM_SSH_KEY_FILE) ./ansible/roles/common/templates/firewall.sh.j2 $(USER)@$(PVE3_IP):/home/$(USER)/
-	scp -i $(ROOT_SSH_KEY_FILE) ./*.sh root@$(PVE1_IP):/root/
-	scp -i $(ROOT_SSH_KEY_FILE) ./.env root@$(PVE1_IP):/root/
-	scp -i $(ROOT_SSH_KEY_FILE) ./terraform/*rsa root@$(PVE1_IP):/root/
-	scp -i $(ROOT_SSH_KEY_FILE) ./terraform/*rsa.pub root@$(PVE1_IP):/root/
-	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) /root/pve-init-cloudinit.sh
+	## local -> pve: id_rsa, root_rsa, .env, *.sh
+	## pve -> template: id_rsa, root_rsa, .env, *virt.sh
+	scp -i $(ROOT_SSH_KEY_FILE) \
+	./*.sh root@$(PVE1_IP) \
+	./.env root@$(PVE1_IP) \
+	./terraform/*rsa root@$(PVE1_IP) \
+	./terraform/*rsa.pub root@$(PVE1_IP) \
+	-t root@$(PVE1_IP):/root/
 
 .PHONY: proxmox-create-template
 proxmox-create-template:
-	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"$(CREATE_TEMPLATE_1)"'
-	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"$(CREATE_TEMPLATE_2)"'
-	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"$(CREATE_TEMPLATE_3)"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"$(CREATE_TEMPLATE_1)"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"$(CREATE_TEMPLATE_2)"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"$(CREATE_TEMPLATE_3)"'
 
 .PHONY: proxmox-destroy-template
 proxmox-destroy-template:
-	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"qm destroy 9001 && rm -rf /var/lib/vz/images/9001"'
-	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"qm destroy 9002 && rm -rf /var/lib/vz/images/9002"'
-	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"qm destroy 9003 && rm -rf /var/lib/vz/images/9003"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"qm destroy 9001 && rm -rf /var/lib/vz/images/9001"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"qm destroy 9002 && rm -rf /var/lib/vz/images/9002"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"qm destroy 9003 && rm -rf /var/lib/vz/images/9003"'
 
 
 .PHONY: proxmox-destroy-all
 proxmox-destroy-all:
-	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"qm destroy 9001 && rm -rf /var/lib/vz/images/9001"'
-	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"qm stop 3003 && qm stop 3002 && qm stop 3001 && qm stop 2003 && qm stop 2002 && qm stop 2001 && pct stop 1002 && pct stop 1001 && qm destroy --destroy-unreferenced-disks --purge true 3003 && qm destroy --destroy-unreferenced-disks --purge true 3002 && qm destroy --destroy-unreferenced-disks --purge true 3001 && qm destroy --destroy-unreferenced-disks --purge true 2003 && qm destroy --destroy-unreferenced-disks --purge true 2002 && qm destroy --destroy-unreferenced-disks --purge true 2001 && qm destroy --destroy-unreferenced-disks --purge true 1002 && qm destroy --destroy-unreferenced-disks --purge true 1001 "'
-	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"qm destroy 9003 && rm -rf /var/lib/vz/images/9003"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"qm destroy --destroy-unreferenced-disks --purge true 9001 "'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"qm destroy --destroy-unreferenced-disks --purge true 9002 "'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"qm destroy --destroy-unreferenced-disks --purge true 9003 "'
 
 .PHONY: proxmox-down-ci-template
 proxmox-down-ci-template:
-	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) \
-	bash -c '"$(WGET_CI_IMAGE)"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"$(WGET_CI_IMAGE)"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_2P) bash -c '"$(WGET_CI_IMAGE)"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_3P) bash -c '"$(WGET_CI_IMAGE)"'
 
 .PHONY: proxmox-down-lxd-template
 proxmox-down-lxd-template:
-	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) \
-	bash -c '"$(DOWNLOAD_LXD_TEMPLATE)"'
+	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"$(DOWNLOAD_LXD_TEMPLATE)"'
 
 .PHONY: refresh
 refresh:
