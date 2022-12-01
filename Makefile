@@ -119,6 +119,33 @@ proxmox-terraform-del:
 	bash -c '"pveum user del terraform-prov@pve && pveum role del TerraformProv"'
 
 
+CI_IMG:=jammy-server-cloudimg-amd64.img
+STORAGE_POOL:="local-lvm"
+VM_ID:="8000"
+VM_NAME:="ubuntu-22.04.1-cloudimg"
+
+define WGET_CI_IMAGE
+wget http://cloud-images.ubuntu.com/jammy/current/$(CI_IMG)
+endef
+
+define CREATE_CLOUD_INIT
+qm destroy 8000 \
+&& virt-customize -v -a $(CI_IMG) --update \
+&& virt-customize -a $(CI_IMG) \
+ 	--install qemu-guest-agent,net-tools,vim,bash-completion,wget,curl,telnet,unzip \
+&& virt-customize -a $(CI_IMG) \
+ 	--timezone "Asia/Seoul" \
+&& qm create $(VM_ID) --memory 2048 --net0 virtio,bridge=vmbr0 \
+&& qm importdisk $(VM_ID) $(CI_IMG) $(STORAGE_POOL) \
+&& qm set $(VM_ID) --scsihw virtio-scsi-pci --scsi0 $(STORAGE_POOL):vm-$(VM_ID)-disk-0 \
+&& qm set $(VM_ID) --agent enabled=1,fstrim_cloned_disks=1 \
+&& qm set $(VM_ID) --name $(VM_NAME0) \
+&& qm set $(VM_ID) --ide2 $(STORAGE_POOL):cloudinit \
+&& qm set $(VM_ID) --boot c --bootdisk scsi0 \
+&& qm set $(VM_ID) --serial0 socket --vga serial0 \
+&& qm template $(VM_ID)
+endef
+
 define CREATE_TEMPLATE_1
 qm create $(VM_TEMPLATE_ID_1) --memory 2048 --net0 virtio,bridge=vmbr0 \
 && qm importdisk $(VM_TEMPLATE_ID_1) jammy-server-cloudimg-amd64.img local --format qcow2 \
@@ -161,6 +188,10 @@ proxmox-set-local:
 	bash -c '"pvesm set local --content backup,images,iso,rootdir,snippets,vztmpl"'
 	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) \
 	bash -c '"pvesm set local --content backup,images,iso,rootdir,snippets,vztmpl"'
+
+.PHONY: proxmox-create-ci
+proxmox-create-ci:
+	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"$(CREATE_CLOUD_INIT)"'
 
 .PHONY: proxmox-create-template
 proxmox-create-template:

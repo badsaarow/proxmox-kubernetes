@@ -95,6 +95,8 @@ pveam download local ubuntu-22.04-standard_22.04-1_amd64.tar.zst
 
 Virtual machines provisioned are initialized using [Cloud-init](https://pve.proxmox.com/wiki/Cloud-Init_Support). You need to create a cloud-init image and convert it to a VM template in order to further clone in the Terraform Proxmox [provider](https://github.com/Telmate/terraform-provider-proxmox) into VMs, resizing the disk, and configuring the default user, passwords, SSH keys and network. To prepare the template, you may use the following commands.
 
+https://registry.terraform.io/modules/sdhibit/cloud-init-vm/proxmox/latest/examples/ubuntu_single_vm
+
 ```bash
 # Download the ubuntu cloud image
 wget http://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img

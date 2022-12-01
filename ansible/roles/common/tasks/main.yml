@@ -12,7 +12,7 @@
 
 - name: Set timezone
   timezone:
-    name: Asia/Hong_Kong
+    name: Asia/Seoul
 
 - name: Disable SSH IPv6
   lineinfile:

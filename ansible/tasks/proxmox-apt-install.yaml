@@ -29,6 +29,7 @@
       - net-tools
       - ifupdown2
       - network-manager
+      - libguestfs-tools
       # proxmox's dpkg has no fix-broken  option
       # dpkg_options: 'fix-broken'
       state: latest
@@ -45,3 +46,4 @@
       pveam available
       pveam download local ubuntu-22.04-standard_22.04-1_amd64.tar.zst
 
+---
