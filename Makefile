@@ -119,11 +119,6 @@ proxmox-terraform-del:
 	bash -c '"pveum user del terraform-prov@pve && pveum role del TerraformProv"'
 
 
-CI_IMG:=jammy-server-cloudimg-amd64.img
-STORAGE_POOL:=local
-VM_ID:=9002
-VM_NAME:=ubuntu-cloudinit
-
 define WGET_CI_IMAGE
 wget http://cloud-images.ubuntu.com/jammy/current/$(CI_IMG)
 endef
@@ -194,11 +189,11 @@ proxmox-create-ci:
 ## local -> pve: id_rsa, root_rsa, .env, *.sh
 ## pve -> template: id_rsa, root_rsa, .env, *virt.sh
 	# scp -i $(TERRAFORM_SSH_KEY_FILE) ./ansible/roles/common/templates/firewall.sh.j2 $(USER)@$(PVE3_IP):/home/$(USER)/
-	scp -i $(ROOT_SSH_KEY_FILE) ./*.sh root@$(PVE2_IP):/root/
-	scp -i $(ROOT_SSH_KEY_FILE) ./.env root@$(PVE2_IP):/root/
-	scp -i $(ROOT_SSH_KEY_FILE) ./terraform/*rsa root@$(PVE2_IP):/root/
-	scp -i $(ROOT_SSH_KEY_FILE) ./terraform/*rsa.pub root@$(PVE2_IP):/root/
-	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) /root/pve-init-cloudinit.sh
+	scp -i $(ROOT_SSH_KEY_FILE) ./*.sh root@$(PVE1_IP):/root/
+	scp -i $(ROOT_SSH_KEY_FILE) ./.env root@$(PVE1_IP):/root/
+	scp -i $(ROOT_SSH_KEY_FILE) ./terraform/*rsa root@$(PVE1_IP):/root/
+	scp -i $(ROOT_SSH_KEY_FILE) ./terraform/*rsa.pub root@$(PVE1_IP):/root/
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) /root/pve-init-cloudinit.sh
 
 .PHONY: proxmox-create-template
 proxmox-create-template:

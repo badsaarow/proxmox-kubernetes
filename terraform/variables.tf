@@ -1,7 +1,7 @@
 variable "common" {
   type = map(string)
   default = {
-    clone         = "ubuntu-cloudinit"
+    clone         = "ubuntu-qemu-cloudinit"
     os_template   = "local:vztmpl/ubuntu-22.04-standard_22.04-1_amd64.tar.zst"
     os_type       = "ubuntu"
     nameserver    = "10.0.0.101"
@@ -99,10 +99,11 @@ variable "workers" {
   type = map(map(string))
   default = {
     kube-worker1 = {
+      target_node   = "hci-internal-2"
       id      = 3001
       cidr    = "10.0.0.121/24"
       cores   = 2
-        gw      = "10.0.0.101"
+      gw      = "10.0.0.101"
       macaddr = "62:0E:E4:E4:7B:46"
       ip      = "10.0.0.121"
       memory  = 5120
@@ -113,7 +114,7 @@ variable "workers" {
       id      = 3002
       cidr    = "10.0.0.122/24"
       cores   = 2
-        gw      = "10.0.0.101"
+      gw      = "10.0.0.101"
       ip      = "10.0.0.122"
       memory  = 5120
       disk    = "80G"
@@ -123,7 +124,7 @@ variable "workers" {
       id      = 3003
       cidr    = "10.0.0.123/24"
       cores   = 2
-        gw      = "10.0.0.101"
+      gw      = "10.0.0.101"
       ip      = "10.0.0.123"
       memory  = 5120
       disk    = "80G"
