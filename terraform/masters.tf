@@ -2,7 +2,7 @@ resource "proxmox_vm_qemu" "kube-master" {
   for_each = var.masters
 
   name        = each.key
-  target_node = var.common.target_node
+  target_node = each.value.target_node
   # The destination resource pool for the new VM
   pool        = "k8s-pool"
   # Activate QEMU agent for this VM
@@ -17,9 +17,9 @@ resource "proxmox_vm_qemu" "kube-master" {
     type = "qxl"
   }
   network {
-    model    = "virtio"
-    bridge   = "vmbr0"
-    firewall = false
+      model    = "virtio"
+      bridge   = "vmbr0"
+      firewall = false
   }
   disk {
     type         = "scsi"

@@ -2,7 +2,7 @@ resource "proxmox_vm_qemu" "kube-worker" {
   for_each = var.workers
 
   name        = each.key
-  target_node = var.common.target_node
+  target_node = each.value.target_node
   agent       = 1
   automatic_reboot = true
   balloon     = 0
@@ -28,10 +28,10 @@ resource "proxmox_vm_qemu" "kube-worker" {
     type = "qxl"
   }
   network {
-    model    = "virtio"
-    bridge   = "vmbr0"
-    firewall = false
-    link_down = false
+      model    = "virtio"
+      bridge   = "vmbr0"
+      firewall = false
+      link_down = false
   }
   disk {
     type         = "scsi"

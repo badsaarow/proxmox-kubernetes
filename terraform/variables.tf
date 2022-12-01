@@ -2,7 +2,6 @@ variable "common" {
   type = map(string)
   default = {
     clone         = "ubuntu-cloudinit"
-    target_node   = "hci-internal-2"
     os_template   = "local:vztmpl/ubuntu-22.04-standard_22.04-1_amd64.tar.zst"
     os_type       = "ubuntu"
     nameserver    = "10.0.0.101"
@@ -14,6 +13,7 @@ variable "gateways" {
   type = map(any)
   default = {
     gateway1 = {
+      target_node   = "hci-internal-1"
       id     = 1001
       cores  = 2
       memory = 2048
@@ -35,6 +35,7 @@ variable "gateways" {
       ]
     }
     gateway2 = {
+      target_node   = "hci-internal-2"
       id     = 1002
       cores  = 2
       memory = 2048
@@ -62,6 +63,7 @@ variable "masters" {
   type = map(map(string))
   default = {
     kube-master1 = {
+      target_node   = "hci-internal-2"
       id      = 2001
       cidr    = "10.0.0.111/24"
       cores   = 2
@@ -71,6 +73,7 @@ variable "masters" {
       disk    = "40G"
     },
     kube-master2 = {
+      target_node   = "hci-internal-2"
       id      = 2002
       cidr    = "10.0.0.112/24"
       cores   = 2
@@ -80,6 +83,7 @@ variable "masters" {
       disk    = "40G"
     },
     kube-master3 = {
+      target_node   = "hci-internal-3"
       id      = 2003
       cidr    = "10.0.0.113/24"
       cores   = 2
@@ -98,26 +102,28 @@ variable "workers" {
       id      = 3001
       cidr    = "10.0.0.121/24"
       cores   = 2
-      gw      = "10.0.0.101"
+        gw      = "10.0.0.101"
       macaddr = "62:0E:E4:E4:7B:46"
       ip      = "10.0.0.121"
       memory  = 5120
       disk    = "80G"
     },
     kube-worker2 = {
+      target_node   = "hci-internal-2"
       id      = 3002
       cidr    = "10.0.0.122/24"
       cores   = 2
-      gw      = "10.0.0.101"
+        gw      = "10.0.0.101"
       ip      = "10.0.0.122"
       memory  = 5120
       disk    = "80G"
     },
     kube-worker3 = {
+      target_node   = "hci-internal-2"
       id      = 3003
       cidr    = "10.0.0.123/24"
       cores   = 2
-      gw      = "10.0.0.101"
+        gw      = "10.0.0.101"
       ip      = "10.0.0.123"
       memory  = 5120
       disk    = "80G"

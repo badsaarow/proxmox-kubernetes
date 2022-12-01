@@ -42,7 +42,7 @@ resource "proxmox_lxc" "gateway" {
   ])
   start = true
   unprivileged = true
-  target_node  = var.common.target_node
+  target_node  = each.value.target_node
 
   connection {
     type                = "ssh"
