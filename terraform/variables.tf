@@ -1,7 +1,7 @@
 variable "common" {
   type = map(string)
   default = {
-    clone         = "VM 9002"
+    clone         = "ubuntu-cloudinit"
     target_node   = "hci-internal-2"
     os_template   = "local:vztmpl/ubuntu-22.04-standard_22.04-1_amd64.tar.zst"
     os_type       = "ubuntu"

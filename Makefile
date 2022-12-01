@@ -120,26 +120,26 @@ proxmox-terraform-del:
 
 
 CI_IMG:=jammy-server-cloudimg-amd64.img
-STORAGE_POOL:="local-lvm"
-VM_ID:="8000"
-VM_NAME:="ubuntu-22.04.1-cloudimg"
+STORAGE_POOL:=local
+VM_ID:=9002
+VM_NAME:=ubuntu-cloudinit
 
 define WGET_CI_IMAGE
 wget http://cloud-images.ubuntu.com/jammy/current/$(CI_IMG)
 endef
 
 define CREATE_CLOUD_INIT
-qm destroy 8000 \
-&& virt-customize -v -a $(CI_IMG) --update \
+qm destroy $(VM_ID) --destroy-unreferenced-disks --purge true \
+;virt-customize -v -a $(CI_IMG) --update \
 && virt-customize -a $(CI_IMG) \
  	--install qemu-guest-agent,net-tools,vim,bash-completion,wget,curl,telnet,unzip \
 && virt-customize -a $(CI_IMG) \
  	--timezone "Asia/Seoul" \
 && qm create $(VM_ID) --memory 2048 --net0 virtio,bridge=vmbr0 \
-&& qm importdisk $(VM_ID) $(CI_IMG) $(STORAGE_POOL) \
-&& qm set $(VM_ID) --scsihw virtio-scsi-pci --scsi0 $(STORAGE_POOL):vm-$(VM_ID)-disk-0 \
+&& qm importdisk $(VM_ID) $(CI_IMG) $(STORAGE_POOL) --format qcow2\
+&& qm set $(VM_ID) --scsihw virtio-scsi-pci --scsi0 $(STORAGE_POOL):$(VM_ID)/vm-$(VM_ID)-disk-0.qcow2 \
 && qm set $(VM_ID) --agent enabled=1,fstrim_cloned_disks=1 \
-&& qm set $(VM_ID) --name $(VM_NAME0) \
+&& qm set $(VM_ID) --name $(VM_NAME) \
 && qm set $(VM_ID) --ide2 $(STORAGE_POOL):cloudinit \
 && qm set $(VM_ID) --boot c --bootdisk scsi0 \
 && qm set $(VM_ID) --serial0 socket --vga serial0 \
@@ -191,7 +191,14 @@ proxmox-set-local:
 
 .PHONY: proxmox-create-ci
 proxmox-create-ci:
-	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"$(CREATE_CLOUD_INIT)"'
+## local -> pve: id_rsa, root_rsa, .env, *.sh
+## pve -> template: id_rsa, root_rsa, .env, *virt.sh
+	# scp -i $(TERRAFORM_SSH_KEY_FILE) ./ansible/roles/common/templates/firewall.sh.j2 $(USER)@$(PVE3_IP):/home/$(USER)/
+	scp -i $(ROOT_SSH_KEY_FILE) ./*.sh root@$(PVE2_IP):/root/
+	scp -i $(ROOT_SSH_KEY_FILE) ./.env root@$(PVE2_IP):/root/
+	scp -i $(ROOT_SSH_KEY_FILE) ./terraform/*rsa root@$(PVE2_IP):/root/
+	scp -i $(ROOT_SSH_KEY_FILE) ./terraform/*rsa.pub root@$(PVE2_IP):/root/
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) /root/pve-init-cloudinit.sh
 
 .PHONY: proxmox-create-template
 proxmox-create-template:
@@ -205,11 +212,17 @@ proxmox-destroy-template:
 	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"qm destroy 9002 && rm -rf /var/lib/vz/images/9002"'
 	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"qm destroy 9003 && rm -rf /var/lib/vz/images/9003"'
 
+
 .PHONY: proxmox-destroy-all
 proxmox-destroy-all:
 	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"qm destroy 9001 && rm -rf /var/lib/vz/images/9001"'
 	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"qm stop 3003 && qm stop 3002 && qm stop 3001 && qm stop 2003 && qm stop 2002 && qm stop 2001 && pct stop 1002 && pct stop 1001 && qm destroy --destroy-unreferenced-disks --purge true 3003 && qm destroy --destroy-unreferenced-disks --purge true 3002 && qm destroy --destroy-unreferenced-disks --purge true 3001 && qm destroy --destroy-unreferenced-disks --purge true 2003 && qm destroy --destroy-unreferenced-disks --purge true 2002 && qm destroy --destroy-unreferenced-disks --purge true 2001 && qm destroy --destroy-unreferenced-disks --purge true 1002 && qm destroy --destroy-unreferenced-disks --purge true 1001 "'
 	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"qm destroy 9003 && rm -rf /var/lib/vz/images/9003"'
+
+.PHONY: proxmox-down-ci-template
+proxmox-down-ci-template:
+	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) \
+	bash -c '"$(WGET_CI_IMAGE)"'
 
 .PHONY: proxmox-down-lxd-template
 proxmox-down-lxd-template:
