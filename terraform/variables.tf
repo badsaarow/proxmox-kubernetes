@@ -2,7 +2,7 @@ variable "common" {
   type = map(string)
   default = {
     clone         = "ubuntu-qemu-cloudinit"
-    os_template   = "local:vztmpl/ubuntu-22.04-standard_22.04-1_amd64.tar.zst"
+    os_template   = "local:vztmpl/ubutu-lxc-22.04-1.tar.gz"
     os_type       = "ubuntu"
     nameserver    = "10.0.0.101"
     search_domain = "hci.pve.cloud"
