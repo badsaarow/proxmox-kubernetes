@@ -199,6 +199,12 @@ proxmox-destroy-all:
 	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"qm destroy --destroy-unreferenced-disks --purge true 9002 "'
 	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"qm destroy --destroy-unreferenced-disks --purge true 9003 "'
 
+.PHONY: proxmox-add-net1
+proxmox-add-net1:
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"qm set 2001 -net1 virtio,bridge=vmbr0 && qm set 3001 -net1 virtio,bridge=vmbr0 "'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"qm set 2002 -net1 virtio,bridge=vmbr0 && qm set 3002 -net1 virtio,bridge=vmbr0 "'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"qm set 2003 -net1 virtio,bridge=vmbr0 && qm set 3003 -net1 virtio,bridge=vmbr0 "'
+
 .PHONY: proxmox-down-lxd-template
 proxmox-down-lxd-template:
 	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"$(DOWNLOAD_LXD_TEMPLATE)"'
