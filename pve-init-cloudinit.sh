@@ -1,6 +1,8 @@
 #!/usr/bin/bash
 . /root/.env
 
+cat /root/.env
+
 virt-customize  -a $CI_IMG \
   --upload .env:/root/ \
   --upload pve-init-cloudinit-virt.sh:/root/ \

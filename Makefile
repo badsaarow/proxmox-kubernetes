@@ -195,12 +195,12 @@ proxmox-create-ci:
 	## pve -> template: id_rsa, root_rsa, .env, *virt.sh
 	scp -i $(ROOT_SSH_KEY_FILE) ./*.sh ./.env  ./terraform/*rsa ./terraform/*rsa.pub  root@$(PVE3_IP):/root/
 
-.PHONY: proxmox-create-template
+.PHONY:
 proxmox-create-template:
-	ssh -i $(ROOT_SSH_KEY_FILE) -t  root@$(PVE1_IP) bash -c '"rm -rf /root/*.sh /root/.env"'
-	scp -i $(ROOT_SSH_KEY_FILE) ./*.sh ./.env  ./terraform/*rsa ./terraform/*rsa.pub   root@$(PVE1_IP):/root/
-	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"/root/pve-init-cloudinit.sh"'
-	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"/root/pve-create-template.sh"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t  root@$(PVE2_IP) bash -c '"rm -rf /root/*.sh /root/.env"'
+	scp -i $(ROOT_SSH_KEY_FILE) ./*.sh ./.env  ./terraform/*rsa ./terraform/*rsa.pub  root@$(PVE2_IP):/root/
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"/root/pve-init-cloudinit.sh"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"/root/pve-create-template.sh"'
 
 .PHONY: proxmox-destroy-template
 proxmox-destroy-template:
@@ -219,7 +219,7 @@ proxmox-destroy-all:
 proxmox-down-ci-template:
 	# ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"$(WGET_CI_IMAGE)"'
 	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_2P) bash -c '"$(WGET_CI_IMAGE)"'
-	# ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_3P) bash -c '"$(WGET_CI_IMAGE)"'
+	# ssh -i $(ROOT_SSH_KEY_FILE) -t root@proxmox-create-template$(PVE1_3P) bash -c '"$(WGET_CI_IMAGE)"'
 
 .PHONY: proxmox-down-lxd-template
 proxmox-down-lxd-template:
