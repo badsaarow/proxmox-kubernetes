@@ -7,20 +7,20 @@ bind_acls:
 bind_allow_query:
   - trusted
 bind_forwarders:
-  - 10.10.20.11
-  - 10.10.20.12
-  - 10.10.20.13
+  - 10.10.10.11
+  - 10.10.10.12
+  - 10.10.10.13
 bind_listen_ipv4:
   - 127.0.0.1
   - 10.0.0.101
 bind_recursion: true
 bind_zone_domains:
-  - name: hci.pve
+  - name: hci.pve.cloud
     networks:
       - '10.0.0'
     name_servers:
-      - ns1.hci.pve.
-      - ns2.hci.pve.
+      - ns1.hci.pve.cloud.
+      - ns2.hci.pve.cloud.
     hostmaster_email: admin
     hosts:
       - name: ns1

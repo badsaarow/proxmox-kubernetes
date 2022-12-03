@@ -5,7 +5,7 @@ variable "common" {
     os_template   = "local:vztmpl/ubuntu-22.04-standard_22.04-1_amd64.tar.zst"
     os_type       = "ubuntu"
     nameserver    = "10.0.0.101"
-    search_domain = "hci.pve"
+    search_domain = "hci.pve.cloud"
   }
 }
 
@@ -13,7 +13,7 @@ variable "gateways" {
   type = map(any)
   default = {
     gateway1 = {
-      target_node   = "hci-internal-1"
+      target_node   = "hci-external-1"
       id     = 1001
       cores  = 2
       memory = 2048
@@ -27,15 +27,15 @@ variable "gateways" {
         },
         # HCI EXT
         {
-          cidr   = "10.10.20.101/24"
+          cidr   = "10.10.10.101/24"
           name   = "eth1"
-          gw     = "10.10.20.1"
-          ip     = "10.10.20.101"
+          gw     = "10.10.10.1"
+          ip     = "10.10.10.101"
         }
       ]
     }
     gateway2 = {
-      target_node   = "hci-internal-2"
+      target_node   = "hci-external-2"
       id     = 1002
       cores  = 2
       memory = 2048
@@ -50,10 +50,10 @@ variable "gateways" {
         },
         # HCI EXT
         {
-          cidr   = "10.10.20.102/24"
+          cidr   = "10.10.10.102/24"
           name   = "eth1"
-          gw     = "10.10.20.1"
-          ip     = "10.10.20.102"
+          gw     = "10.10.10.1"
+          ip     = "10.10.10.102"
         }
     ] }
   }
@@ -63,7 +63,7 @@ variable "masters" {
   type = map(map(string))
   default = {
     kube-master1 = {
-      target_node   = "hci-internal-2"
+      target_node   = "hci-external-1"
       id      = 2001
       cidr    = "10.0.0.111/24"
       cores   = 2
@@ -73,7 +73,7 @@ variable "masters" {
       disk    = "40G"
     },
     kube-master2 = {
-      target_node   = "hci-internal-2"
+      target_node   = "hci-external-2"
       id      = 2002
       cidr    = "10.0.0.112/24"
       cores   = 2
@@ -83,7 +83,7 @@ variable "masters" {
       disk    = "40G"
     },
     kube-master3 = {
-      target_node   = "hci-internal-3"
+      target_node   = "hci-external-3"
       id      = 2003
       cidr    = "10.0.0.113/24"
       cores   = 2
@@ -99,7 +99,7 @@ variable "workers" {
   type = map(map(string))
   default = {
     kube-worker1 = {
-      target_node   = "hci-internal-2"
+      target_node   = "hci-external-1"
       id      = 3001
       cidr    = "10.0.0.121/24"
       cores   = 2
@@ -110,7 +110,7 @@ variable "workers" {
       disk    = "80G"
     },
     kube-worker2 = {
-      target_node   = "hci-internal-2"
+      target_node   = "hci-external-2"
       id      = 3002
       cidr    = "10.0.0.122/24"
       cores   = 2
@@ -120,7 +120,7 @@ variable "workers" {
       disk    = "80G"
     },
     kube-worker3 = {
-      target_node   = "hci-internal-2"
+      target_node   = "hci-external-3"
       id      = 3003
       cidr    = "10.0.0.123/24"
       cores   = 2

@@ -65,7 +65,7 @@ pm_password: <api_password>
 root_password: <root_password>
 # Cloud-init user (i.e. terraform) password
 user_password: <user_password>
-# Bastion host (i.e. proxy.hci.pve) name
+# Bastion host (i.e. proxy.hci.pve.cloud) name
 bastion_host: <bastion_host>
 # Key used by Terraform and Ansible to login to bastion host to execute tasks
 bastion_private_key: |

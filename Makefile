@@ -177,11 +177,11 @@ endef
 
 .PHONY: proxmox-set-local
 proxmox-set-local:
-	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) \
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) \
 	bash -c '"pvesm set local --content backup,images,iso,rootdir,snippets,vztmpl"'
-	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) \
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) \
 	bash -c '"pvesm set local --content backup,images,iso,rootdir,snippets,vztmpl"'
-	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) \
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) \
 	bash -c '"pvesm set local --content backup,images,iso,rootdir,snippets,vztmpl"'
 
 define WGET_CI_IMAGE
@@ -193,24 +193,20 @@ endef
 proxmox-create-ci:
 	## local -> pve: id_rsa, root_rsa, .env, *.sh
 	## pve -> template: id_rsa, root_rsa, .env, *virt.sh
-	scp -i $(ROOT_SSH_KEY_FILE) \
-	./*.sh root@$(PVE1_IP) \
-	./.env root@$(PVE1_IP) \
-	./terraform/*rsa root@$(PVE1_IP) \
-	./terraform/*rsa.pub root@$(PVE1_IP) \
-	-t root@$(PVE1_IP):/root/
+	scp -i $(ROOT_SSH_KEY_FILE) ./*.sh ./.env  ./terraform/*rsa ./terraform/*rsa.pub  root@$(PVE3_IP):/root/
 
 .PHONY: proxmox-create-template
 proxmox-create-template:
-	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"$(CREATE_TEMPLATE_1)"'
-	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"$(CREATE_TEMPLATE_2)"'
-	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"$(CREATE_TEMPLATE_3)"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t  root@$(PVE1_IP) bash -c '"rm -rf /root/*.sh /root/.env"'
+	scp -i $(ROOT_SSH_KEY_FILE) ./*.sh ./.env  ./terraform/*rsa ./terraform/*rsa.pub   root@$(PVE1_IP):/root/
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"/root/pve-init-cloudinit.sh"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"/root/pve-create-template.sh"'
 
 .PHONY: proxmox-destroy-template
 proxmox-destroy-template:
-	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"qm destroy 9001 && rm -rf /var/lib/vz/images/9001"'
+	# ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"qm destroy 9001 && rm -rf /var/lib/vz/images/9001"'
 	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"qm destroy 9002 && rm -rf /var/lib/vz/images/9002"'
-	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"qm destroy 9003 && rm -rf /var/lib/vz/images/9003"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"qm destroy 9003 && rm -rf /var/lib/vz/i mages/9003"'
 
 
 .PHONY: proxmox-destroy-all
@@ -221,9 +217,9 @@ proxmox-destroy-all:
 
 .PHONY: proxmox-down-ci-template
 proxmox-down-ci-template:
-	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"$(WGET_CI_IMAGE)"'
+	# ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"$(WGET_CI_IMAGE)"'
 	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_2P) bash -c '"$(WGET_CI_IMAGE)"'
-	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_3P) bash -c '"$(WGET_CI_IMAGE)"'
+	# ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_3P) bash -c '"$(WGET_CI_IMAGE)"'
 
 .PHONY: proxmox-down-lxd-template
 proxmox-down-lxd-template:
@@ -254,4 +250,4 @@ destroy:
 
 .PHONY: clean
 clean:
-	rm -rf ./terraform/.terraform/ *.backup *.tfstate
+	rm -rf ./terraform/.terraform/ ./terraform/*.backup ./terraform/*.tfstate
