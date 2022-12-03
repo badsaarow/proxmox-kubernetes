@@ -138,39 +138,6 @@ qm destroy $(VM_ID) --destroy-unreferenced-disks --purge true \
 && qm template $(VM_ID)
 endef
 
-define CREATE_TEMPLATE_1
-qm destroy $(VM_TEMPLATE_ID_1) --destroy-unreferenced-disks --purge true \
-&& qm create $(VM_TEMPLATE_ID_1) --memory 2048 --net0 virtio,bridge=vmbr0 \
-&& qm importdisk $(VM_TEMPLATE_ID_1)  $(CI_IMG) local --format qcow2 \
-&& qm set $(VM_TEMPLATE_ID_1) --scsihw virtio-scsi-pci --scsi0 local:$(VM_TEMPLATE_ID_1)/vm-$(VM_TEMPLATE_ID_1)-disk-0.qcow2 \
-&& qm set $(VM_TEMPLATE_ID_1) --ide2 local:cloudinit \
-&& qm set $(VM_TEMPLATE_ID_1) --boot c --bootdisk scsi0 \
-&& qm set $(VM_TEMPLATE_ID_1) --serial0 socket --vga serial0 \
-&& qm template $(VM_TEMPLATE_ID_1)
-endef
-
-define CREATE_TEMPLATE_2
-qm destroy $(VM_TEMPLATE_ID_2) --destroy-unreferenced-disks --purge true \
-&& create $(VM_TEMPLATE_ID_2) --memory 2048 --net0 virtio,bridge=vmbr0 \
-&& qm importdisk $(VM_TEMPLATE_ID_2)  $(CI_IMG) local --format qcow2 \
-&& qm set $(VM_TEMPLATE_ID_2) --scsihw virtio-scsi-pci --scsi0 local:$(VM_TEMPLATE_ID_2)/vm-$(VM_TEMPLATE_ID_2)-disk-0.qcow2 \
-&& qm set $(VM_TEMPLATE_ID_2) --ide2 local:cloudinit \
-&& qm set $(VM_TEMPLATE_ID_2) --boot c --bootdisk scsi0 \
-&& qm set $(VM_TEMPLATE_ID_2) --serial0 socket --vga serial0 \
-&& qm template $(VM_TEMPLATE_ID_2)
-endef
-
-define CREATE_TEMPLATE_3
-qm destroy $(VM_ID) --destroy-unreferenced-disks --purge true \
-&& qm create $(VM_TEMPLATE_ID_3) --memory 2048 --net0 virtio,bridge=vmbr0 \
-&& qm importdisk $(VM_TEMPLATE_ID_3)  $(CI_IMG) local --format qcow2 \
-&& qm set $(VM_TEMPLATE_ID_3) --scsihw virtio-scsi-pci --scsi0 local:$(VM_TEMPLATE_ID_3)/vm-$(VM_TEMPLATE_ID_3)-disk-0.qcow2 \
-&& qm set $(VM_TEMPLATE_ID_3) --ide2 local:cloudinit \
-&& qm set $(VM_TEMPLATE_ID_3) --boot c --bootdisk scsi0 \
-&& qm set $(VM_TEMPLATE_ID_3) --serial0 socket --vga serial0 \
-&& qm template $(VM_TEMPLATE_ID_3)
-endef
-
 define DOWNLOAD_LXD_TEMPLATE
 pveam update && pveam download local ubuntu-22.04-standard_22.04-1_amd64.tar.zst
 endef
@@ -189,18 +156,35 @@ rm -rf /root/$(CI_IMG).* \
 ;wget http://cloud-images.ubuntu.com/jammy/current/$(CI_IMG)
 endef
 
+.PHONY: proxmox-down-ci-template
+proxmox-down-ci-template:
+	# ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"$(WGET_CI_IMAGE)"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_2P) bash -c '"$(WGET_CI_IMAGE)"'
+	# ssh -i $(ROOT_SSH_KEY_FILE) -t root@proxmox-create-template$(PVE1_3P) bash -c '"$(WGET_CI_IMAGE)"'
+
 .PHONY: proxmox-create-ci
 proxmox-create-ci:
 	## local -> pve: id_rsa, root_rsa, .env, *.sh
 	## pve -> template: id_rsa, root_rsa, .env, *virt.sh
-	scp -i $(ROOT_SSH_KEY_FILE) ./*.sh ./.env  ./terraform/*rsa ./terraform/*rsa.pub  root@$(PVE3_IP):/root/
+	cp -f pve1.env .env && scp -i $(ROOT_SSH_KEY_FILE) ./*.sh ./.env  ./terraform/*rsa ./terraform/*rsa.pub  root@$(PVE1_IP):/root/
 
 .PHONY:
 proxmox-create-template:
+	cp -f pve1.env .env
+	ssh -i $(ROOT_SSH_KEY_FILE) -t  root@$(PVE1_IP) bash -c '"rm -rf /root/*.sh /root/.env"'
+	scp -i $(ROOT_SSH_KEY_FILE) ./*.sh ./.env  ./terraform/*rsa ./terraform/*rsa.pub  root@$(PVE1_IP):/root/
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"/root/pve-init-cloudinit.sh"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"/root/pve-create-template.sh"'
+	cp -f pve2.env .env
 	ssh -i $(ROOT_SSH_KEY_FILE) -t  root@$(PVE2_IP) bash -c '"rm -rf /root/*.sh /root/.env"'
 	scp -i $(ROOT_SSH_KEY_FILE) ./*.sh ./.env  ./terraform/*rsa ./terraform/*rsa.pub  root@$(PVE2_IP):/root/
 	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"/root/pve-init-cloudinit.sh"'
 	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"/root/pve-create-template.sh"'
+	cp -f pve3.env .env
+	ssh -i $(ROOT_SSH_KEY_FILE) -t  root@$(PVE3_IP) bash -c '"rm -rf /root/*.sh /root/.env"'
+	scp -i $(ROOT_SSH_KEY_FILE) ./*.sh ./.env  ./terraform/*rsa ./terraform/*rsa.pub  root@$(PVE3_IP):/root/
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"/root/pve-init-cloudinit.sh"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"/root/pve-create-template.sh"'
 
 .PHONY: proxmox-destroy-template
 proxmox-destroy-template:
@@ -214,12 +198,6 @@ proxmox-destroy-all:
 	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"qm destroy --destroy-unreferenced-disks --purge true 9001 "'
 	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"qm destroy --destroy-unreferenced-disks --purge true 9002 "'
 	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"qm destroy --destroy-unreferenced-disks --purge true 9003 "'
-
-.PHONY: proxmox-down-ci-template
-proxmox-down-ci-template:
-	# ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"$(WGET_CI_IMAGE)"'
-	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_2P) bash -c '"$(WGET_CI_IMAGE)"'
-	# ssh -i $(ROOT_SSH_KEY_FILE) -t root@proxmox-create-template$(PVE1_3P) bash -c '"$(WGET_CI_IMAGE)"'
 
 .PHONY: proxmox-down-lxd-template
 proxmox-down-lxd-template:
