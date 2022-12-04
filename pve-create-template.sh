@@ -8,7 +8,7 @@ qm importdisk $VM_TEMPLATE_ID  jammy-server-cloudimg-amd64.img local --format qc
 qm set $VM_TEMPLATE_ID \
   --scsihw virtio-scsi-pci --scsi0 local:$VM_TEMPLATE_ID/vm-$VM_TEMPLATE_ID-disk-0.qcow2 \
   --agent enabled=1,fstrim_cloned_disks=1 \
-  --name $VM_NAME \
+  --name $VM_TEMPLATE_ID \
   --ide2 local:cloudinit \
   --boot c --bootdisk scsi0 \
   --serial0 socket --vga serial0

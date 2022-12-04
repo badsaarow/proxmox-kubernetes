@@ -109,7 +109,10 @@ proxmox-install-zerotier:
 
 .PHONY: reboot
 reboot:
-	ansible-playbook -i ./ansible/tasks/inventory-proxmox.yaml ./ansible/tasks/reboot.yaml -u root --private-key $(ROOT_SSH_KEY_FILE)
+	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"reboot"'
+	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"reboot"'
+	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"reboot"'
+	# ansible-playbook -i ./ansible/tasks/inventory-proxmox.yaml ./ansible/tasks/reboot.yaml -u root --private-key $(ROOT_SSH_KEY_FILE)
 
 .PHONY: restart-service
 restart-service:
