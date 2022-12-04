@@ -2,11 +2,11 @@
 ## /etc/firewall.sh
 set -e
 
-PRIVATE_SUBNET=10.10.10.0/24
+PRIVATE_SUBNET=10.10.20.0/24
 PUBLIC_INTERFACE=vmbr0
 PRIVATE_INTERFACE=vmbr1
 
-PROXY_CONTAINER=10.10.10.1
+PROXY_CONTAINER=10.10.20.1
 
 exe() { ( echo "## $*"; $*; ) }
 

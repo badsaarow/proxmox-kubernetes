@@ -11,7 +11,7 @@ variable "masters" {
   type = map(map(string))
   default = {
     kube-master1 = {
-      target_node   = "hci-internal-1"
+      target_node   = "hci-external-1"
       id      = 2001
       cidr    = "10.10.20.111/24"
       cores   = 2
@@ -21,7 +21,7 @@ variable "masters" {
       disk    = "40G"
     },
     kube-master2 = {
-      target_node   = "hci-internal-2"
+      target_node   = "hci-external-2"
       id      = 2002
       cidr    = "10.10.20.112/24"
       cores   = 2
@@ -31,7 +31,7 @@ variable "masters" {
       disk    = "40G"
     },
     kube-master3 = {
-      target_node   = "hci-internal-3"
+      target_node   = "hci-external-3"
       id      = 2003
       cidr    = "10.10.20.113/24"
       cores   = 2
@@ -47,7 +47,7 @@ variable "workers" {
   type = map(map(string))
   default = {
     kube-worker1 = {
-      target_node   = "hci-internal-1"
+      target_node   = "hci-external-1"
       id      = 3001
       cidr    = "10.10.20.121/24"
       cores   = 2
@@ -58,7 +58,7 @@ variable "workers" {
       disk    = "80G"
     },
     kube-worker2 = {
-      target_node   = "hci-internal-2"
+      target_node   = "hci-external-2"
       id      = 3002
       cidr    = "10.10.20.122/24"
       cores   = 2
@@ -68,7 +68,7 @@ variable "workers" {
       disk    = "80G"
     },
     kube-worker3 = {
-      target_node   = "hci-internal-3"
+      target_node   = "hci-external-3"
       id      = 3003
       cidr    = "10.10.20.123/24"
       cores   = 2

@@ -132,9 +132,9 @@ define CREATE_CLOUD_INIT
 qm destroy $(VM_ID) --destroy-unreferenced-disks --purge true \
 ;virt-customize -v -a $(CI_IMG) --update \
 && virt-customize -a $(CI_IMG) \
- 	--install qemu-guest-agent,net-tools,vim,bash-completion,wget,curl,telnet,unzip \
+--install qemu-guest-agent,net-tools,vim,bash-completion,wget,curl,telnet,unzip \
 && virt-customize -a $(CI_IMG) \
- 	--timezone "Asia/Seoul" \
+--timezone "Asia/Seoul" \
 && qm create $(VM_ID) --memory 2048 --net0 virtio,bridge=vmbr0 \
 && qm importdisk $(VM_ID) $(CI_IMG) $(STORAGE_POOL) --format qcow2\
 && qm set $(VM_ID) --scsihw virtio-scsi-pci --scsi0 $(STORAGE_POOL):$(VM_ID)/vm-$(VM_ID)-disk-0.qcow2 \

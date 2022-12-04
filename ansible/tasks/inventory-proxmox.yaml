@@ -2,8 +2,8 @@
 proxmox:
   hosts:
     node1:
-      ansible_host: hci.int1.gaamtech.kro.kr
+      ansible_host: hci.ext1.gaamtech.kro.kr
     node2:
-      ansible_host: hci.int2.gaamtech.kro.kr
+      ansible_host: hci.ext2.gaamtech.kro.kr
     node3:
-      ansible_host: hci.int3.gaamtech.kro.kr
+      ansible_host: hci.ext3.gaamtech.kro.kr
