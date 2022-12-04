@@ -7,4 +7,4 @@
   ufw:
     rule: allow
     name: Bind9
-    src: 10.10.20.0/24
+    src: 10.10.10.0/24

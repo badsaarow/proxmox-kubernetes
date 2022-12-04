@@ -3,16 +3,16 @@ bind_acls:
   - name: trusted
     match_list:
       - 127.0.0.1
-      - 10.10.20.0/24
+      - 10.10.10.0/24
 bind_allow_query:
   - trusted
 bind_forwarders:
-  - 10.10.20.11
-  - 10.10.20.12
-  - 10.10.20.13
+  - 10.10.10.11
+  - 10.10.10.12
+  - 10.10.10.13
 bind_listen_ipv4:
   - 127.0.0.1
-  - 10.10.20.101
+  - 10.10.10.101
 bind_recursion: true
 bind_zone_domains:
   - name: hci.pve.cloud
@@ -24,25 +24,25 @@ bind_zone_domains:
     hostmaster_email: admin
     hosts:
       - name: ns1
-        ip: 10.10.20.101
+        ip: 10.10.10.101
       - name: ns2
-        ip: 10.10.20.102
+        ip: 10.10.10.102
       - name: gateway1
-        ip: 10.10.20.101
+        ip: 10.10.10.101
       - name: gateway2
-        ip: 10.10.20.102
+        ip: 10.10.10.102
       - name: kube-cluster1
-        ip: 10.10.20.110
+        ip: 10.10.10.110
       - name: kube-master1
-        ip: 10.10.20.111
+        ip: 10.10.10.111
       - name: kube-master2
-        ip: 10.10.20.112
+        ip: 10.10.10.112
       - name: kube-master3
-        ip: 10.10.20.113
+        ip: 10.10.10.113
       - name: kube-worker1
-        ip: 10.10.20.121
+        ip: 10.10.10.121
       - name: kube-worker2
-        ip: 10.10.20.122
+        ip: 10.10.10.122
       - name: kube-worker3
-        ip: 10.10.20.123
-bind_zone_master_server_ip: 10.10.20.101
+        ip: 10.10.10.123
+bind_zone_master_server_ip: 10.10.10.101

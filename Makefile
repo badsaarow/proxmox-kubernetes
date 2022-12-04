@@ -54,12 +54,12 @@ proxmox-terraform-copy-key:
 
 .PHONY: proxmox-vm-copy-key
 proxmox-vm-copy-key:
-	ssh-copy-id -f -i $(TERRAFORM_SSH_KEY_FILE) -o "IdentityFile /home/$(USER)/$(USER).pem" $(USER)@$10.10.20.111
-	ssh-copy-id -f -i $(TERRAFORM_SSH_KEY_FILE) -o "IdentityFile /home/$(USER)/$(USER).pem" $(USER)@$10.10.20.112
-	ssh-copy-id -f -i $(TERRAFORM_SSH_KEY_FILE) -o "IdentityFile /home/$(USER)/$(USER).pem" $(USER)@$10.10.20.113
-	ssh-copy-id -f -i $(TERRAFORM_SSH_KEY_FILE) -o "IdentityFile /home/$(USER)/$(USER).pem" $(USER)@$10.10.20.121
-	ssh-copy-id -f -i $(TERRAFORM_SSH_KEY_FILE) -o "IdentityFile /home/$(USER)/$(USER).pem" $(USER)@$10.10.20.122
-	ssh-copy-id -f -i $(TERRAFORM_SSH_KEY_FILE) -o "IdentityFile /home/$(USER)/$(USER).pem" $(USER)@$10.10.20.123
+	ssh-copy-id -f -i $(TERRAFORM_SSH_KEY_FILE) -o "IdentityFile /home/$(USER)/$(USER).pem" $(USER)@$10.10.10.111
+	ssh-copy-id -f -i $(TERRAFORM_SSH_KEY_FILE) -o "IdentityFile /home/$(USER)/$(USER).pem" $(USER)@$10.10.10.112
+	ssh-copy-id -f -i $(TERRAFORM_SSH_KEY_FILE) -o "IdentityFile /home/$(USER)/$(USER).pem" $(USER)@$10.10.10.113
+	ssh-copy-id -f -i $(TERRAFORM_SSH_KEY_FILE) -o "IdentityFile /home/$(USER)/$(USER).pem" $(USER)@$10.10.10.121
+	ssh-copy-id -f -i $(TERRAFORM_SSH_KEY_FILE) -o "IdentityFile /home/$(USER)/$(USER).pem" $(USER)@$10.10.10.122
+	ssh-copy-id -f -i $(TERRAFORM_SSH_KEY_FILE) -o "IdentityFile /home/$(USER)/$(USER).pem" $(USER)@$10.10.10.123
 
 .PHONY: proxmox-copy-net-config
 proxmox-copy-net-config:

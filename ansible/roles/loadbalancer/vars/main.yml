@@ -4,7 +4,7 @@ haproxy_selinux: false
 
 haproxy_default_mode: http
 
-haproxy_stats_address: 10.10.20.100
+haproxy_stats_address: 10.10.10.100
 haproxy_stats_port: 1080
 haproxy_stats_user: admin
 haproxy_stats_password: "{{ loadbalancer_haproxy_password }}"
@@ -26,9 +26,9 @@ haproxy_backend:
       mode: tcp
       method: roundrobin
       servers:
-        - kube-master1 10.10.20.111:6443 check
-        - kube-master2 10.10.20.112:6443 check
-        - kube-master3 10.10.20.113:6443 check
+        - kube-master1 10.10.10.111:6443 check
+        - kube-master2 10.10.10.112:6443 check
+        - kube-master3 10.10.10.113:6443 check
 
 keepalived_scripts:
   haproxy_check_script:
@@ -48,4 +48,4 @@ keepalived_instances:
     track_scripts:
       - haproxy_check_script
     vips:
-      - 10.10.20.100
+      - 10.10.10.100

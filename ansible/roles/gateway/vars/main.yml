@@ -1,4 +1,4 @@
 ---
-nat_cidr: 10.10.20.0/24
+nat_cidr: 10.10.10.0/24
 nat_interface: eth1
-nat_server_ip: 10.10.20.1
+nat_server_ip: 10.10.10.1
