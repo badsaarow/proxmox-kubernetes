@@ -23,15 +23,6 @@
   notify:
     - Restart ssh
 
-- name: Disable SSH password auth
-  lineinfile:
-    path: /etc/ssh/sshd_config
-    regexp: "^#PasswordAuthentication yes"
-    line: "PasswordAuthentication no"
-    backrefs: yes
-  notify:
-    - Restart ssh
-
 - name: Disable IPv6
   include_role:
     name: ypsman.ipv6_disable

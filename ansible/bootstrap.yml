@@ -1,16 +1,4 @@
 ---
-- hosts: gateways
-  roles:
-    - role: gateway
-      tags:
-        - gateway
-    - role: named
-      tags:
-        - named
-    - role: loadbalancer
-      tags:
-        - loadbalancer
-
 - hosts: all
   roles:
     - role: common

@@ -50,8 +50,6 @@ resource "proxmox_vm_qemu" "kube-worker" {
   ciuser     = "terraform-prov"
   cipassword = yamldecode(data.local_file.secrets.content).user_password
   # cipassword   = "**********" # un-comment after creation
-  searchdomain = var.common.search_domain
-  nameserver   = var.common.nameserver
   sshkeys = join("", [
     data.tls_public_key.bastion.public_key_openssh,
     data.tls_public_key.vm.public_key_openssh

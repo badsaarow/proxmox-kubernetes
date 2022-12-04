@@ -11,9 +11,9 @@ all:
 
 .PHONY: proxmox-add-ssh-key
 proxmox-add-ssh-key:
-	ssh-copy-id -f -i $(ROOT_SSH_KEY_FILE).pub -o "IdentityFile /root/root.pem" root@$(PVE1_IP)
-	ssh-copy-id -f -i $(ROOT_SSH_KEY_FILE).pub -o "IdentityFile /root/root.pem" root@$(PVE2_IP)
-	ssh-copy-id -f -i $(ROOT_SSH_KEY_FILE).pub -o "IdentityFile /root/root.pem" root@$(PVE3_IP)
+	ssh-copy-id -f -i $(ROOT_SSH_KEY_FILE) -o "IdentityFile /root/root.pem" root@$(PVE1_IP)
+	ssh-copy-id -f -i $(ROOT_SSH_KEY_FILE) -o "IdentityFile /root/root.pem" root@$(PVE2_IP)
+	ssh-copy-id -f -i $(ROOT_SSH_KEY_FILE) -o "IdentityFile /root/root.pem" root@$(PVE3_IP)
 
 
 .PHONY: proxmox-add-user
@@ -29,7 +29,7 @@ change-password:
 	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"echo "$(USER):$(PASSWD)" | chpasswd"'
 
 define UPDATE_TF_USER
-pveum role modify TerraformProv -privs \"VM.Allocate VM.Console VM.Clone VM.Config.CDROM VM.Config.CPU VM.Config.Cloudinit VM.Config.Disk VM.Config.HWType VM.Config.Memory VM.Config.Network VM.Config.Options VM.Monitor VM.Audit VM.PowerMgmt Datastore.AllocateSpace Datastore.Audit\" \
+pveum role modify TerraformProv -privs \"VM.Allocate VM.Console VM.Clone VM.Config.CDROM VM.Config.CPU VM.Config.Cloudinit VM.Config.Disk VM.Config.HWType VM.Config.Memory VM.Config.Network VM.Config.Options VM.Monitor VM.Audit VM.PowerMgmt Pool.Allocate Datastore.AllocateSpace Datastore.Audit\" \
 && pveum aclmod / -user terraform-prov@pve -role TerraformProv
 endef
 
@@ -52,6 +52,14 @@ proxmox-terraform-copy-key:
 	ssh-copy-id -f -i $(TERRAFORM_SSH_KEY_FILE) -o "IdentityFile /home/$(USER)/$(USER).pem" $(USER)@$(PVE2_IP)
 	ssh-copy-id -f -i $(TERRAFORM_SSH_KEY_FILE) -o "IdentityFile /home/$(USER)/$(USER).pem" $(USER)@$(PVE3_IP)
 
+.PHONY: proxmox-vm-copy-key
+proxmox-vm-copy-key:
+	ssh-copy-id -f -i $(TERRAFORM_SSH_KEY_FILE) -o "IdentityFile /home/$(USER)/$(USER).pem" $(USER)@$10.10.20.111
+	ssh-copy-id -f -i $(TERRAFORM_SSH_KEY_FILE) -o "IdentityFile /home/$(USER)/$(USER).pem" $(USER)@$10.10.20.112
+	ssh-copy-id -f -i $(TERRAFORM_SSH_KEY_FILE) -o "IdentityFile /home/$(USER)/$(USER).pem" $(USER)@$10.10.20.113
+	ssh-copy-id -f -i $(TERRAFORM_SSH_KEY_FILE) -o "IdentityFile /home/$(USER)/$(USER).pem" $(USER)@$10.10.20.121
+	ssh-copy-id -f -i $(TERRAFORM_SSH_KEY_FILE) -o "IdentityFile /home/$(USER)/$(USER).pem" $(USER)@$10.10.20.122
+	ssh-copy-id -f -i $(TERRAFORM_SSH_KEY_FILE) -o "IdentityFile /home/$(USER)/$(USER).pem" $(USER)@$10.10.20.123
 
 .PHONY: proxmox-copy-net-config
 proxmox-copy-net-config:
@@ -167,8 +175,10 @@ proxmox-create-ci:
 	## local -> pve: id_rsa, root_rsa, .env, *.sh
 	## pve -> template: id_rsa, root_rsa, .env, *virt.sh
 	cp -f pve1.env .env && scp -i $(ROOT_SSH_KEY_FILE) ./*.sh ./.env  ./terraform/*rsa ./terraform/*rsa.pub  root@$(PVE1_IP):/root/
+	cp -f pve1.env .env && scp -i $(ROOT_SSH_KEY_FILE) ./*.sh ./.env  ./terraform/*rsa ./terraform/*rsa.pub  root@$(PVE2_IP):/root/
+	cp -f pve1.env .env && scp -i $(ROOT_SSH_KEY_FILE) ./*.sh ./.env  ./terraform/*rsa ./terraform/*rsa.pub  root@$(PVE3_IP):/root/
 
-.PHONY:
+.PHONY: proxmox-create-template
 proxmox-create-template:
 	cp -f pve1.env .env
 	ssh -i $(ROOT_SSH_KEY_FILE) -t  root@$(PVE1_IP) bash -c '"rm -rf /root/*.sh /root/.env"'
@@ -235,3 +245,7 @@ destroy:
 .PHONY: clean
 clean:
 	rm -rf ./terraform/.terraform/ ./terraform/*.backup ./terraform/*.tfstate
+
+.PHONY: ansible
+ansible:
+	cd ansible && ansible-playbook -v -i inventories/hosts.ini kubernetes.yml

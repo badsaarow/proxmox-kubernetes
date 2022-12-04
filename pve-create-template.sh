@@ -13,11 +13,3 @@ qm set $VM_TEMPLATE_ID \
   --boot c --bootdisk scsi0 \
   --serial0 socket --vga serial0
 qm template $VM_TEMPLATE_ID
-
-
-qm 2003 update
-qm 2003 -net1    [model=]<enum> [,bridge=<bridge>] [,firewall=<1|0>]
-             [,link_down=<1|0>] [,macaddr=<XX:XX:XX:XX:XX:XX>]
-             [,mtu=<integer>] [,queues=<integer>] [,rate=<number>]
-             [,tag=<integer>] [,trunks=<vlanid[;vlanid...]>]
-             [,<model>=<macaddr>]9;5u
