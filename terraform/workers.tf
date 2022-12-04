@@ -8,6 +8,7 @@ resource "proxmox_vm_qemu" "kube-worker" {
   balloon     = 0
   bios        = "seabios"
   clone       = var.common.clone
+  nameserver  = var.common.nameserver
   full_clone  = false
   vmid        = each.value.id
   memory      = each.value.memory

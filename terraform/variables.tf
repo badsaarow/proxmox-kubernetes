@@ -4,6 +4,7 @@ variable "common" {
     clone         = "ubuntu-qemu-cloudinit"
     os_template   = "local:vztmpl/ubutu-lxc-22.04-1.tar.gz"
     os_type       = "ubuntu"
+    nameserver    = "8.8.8.8"
   }
 }
 
