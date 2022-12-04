@@ -8,7 +8,7 @@ resource "proxmox_vm_qemu" "kube-master" {
   # Activate QEMU agent for this VM
   agent       = 1
   # The template name to clone this vm from
-  clone       = var.common.clone
+  clone       = each.value.clone
   nameserver  = var.common.nameserver
   full_clone = false
   vmid        = each.value.id

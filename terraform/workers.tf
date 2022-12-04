@@ -7,7 +7,7 @@ resource "proxmox_vm_qemu" "kube-worker" {
   automatic_reboot = true
   balloon     = 0
   bios        = "seabios"
-  clone       = var.common.clone
+  clone       = each.value.clone
   nameserver  = var.common.nameserver
   full_clone  = false
   vmid        = each.value.id
