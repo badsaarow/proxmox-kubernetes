@@ -15,6 +15,14 @@ proxmox-add-ssh-key:
 	ssh-copy-id -f -i $(ROOT_SSH_KEY_FILE) -o "IdentityFile /root/root.pem" root@$(PVE2_IP)
 	ssh-copy-id -f -i $(ROOT_SSH_KEY_FILE) -o "IdentityFile /root/root.pem" root@$(PVE3_IP)
 
+.PHONY: proxmox-push-root-key
+proxmox-push-root-key:
+	scp -i $(ROOT_SSH_KEY_FILE) terraform/root_rsa root@$(PVE1_IP):/root/.ssh/id_rsa
+	scp -i $(ROOT_SSH_KEY_FILE) terraform/root_rsa.pub root@$(PVE1_IP):/root/.ssh/id_rsa.pub
+	scp -i $(ROOT_SSH_KEY_FILE) terraform/root_rsa root@$(PVE2_IP):/root/.ssh/id_rsa
+	scp -i $(ROOT_SSH_KEY_FILE) terraform/root_rsa.pub root@$(PVE2_IP):/root/.ssh/id_rsa.pub
+	scp -i $(ROOT_SSH_KEY_FILE) terraform/root_rsa root@$(PVE3_IP):/root/.ssh/id_rsa
+	scp -i $(ROOT_SSH_KEY_FILE) terraform/root_rsa.pub root@$(PVE3_IP):/root/.ssh/id_rsa.pub
 
 .PHONY: proxmox-add-user
 proxmox-add-user:
