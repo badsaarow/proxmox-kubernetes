@@ -1,0 +1,76 @@
+# sudo vi /etc/network/interfaces
+# sudo vi /etc/sysctl.conf
+#net.ipv4.ip_forward=1
+#net.ipv6.conf.all.forwarding=1
+auto lo
+iface lo inet loopback
+
+# eno1 is my physical network adapter name.
+# Change 'enp3s0' *everywhere* in this file for your adapter name.
+
+auto enp216s0f0
+iface enp216s0f0 inet manual
+    post-up echo 1 > /proc/sys/net/ipv4/conf/enp216s0f0/proxy_arp
+
+auto enp94s0f1
+iface enp94s0f1 inet manual
+    post-up echo 1 > /proc/sys/net/ipv4/conf/enp94s0f1/proxy_arp
+
+# vmbr0 is your *HCI* network interface.
+auto vmbr0
+iface vmbr0 inet static
+    # This is the static *HCI* ip address:
+    address 10.10.10.11/24
+    gateway 10.10.10.1
+    bridge-ports enp216s0f0
+    bridge-stp off
+    bridge-fd 0
+    bridge-maxwait 0
+    post-up echo 1 > /proc/sys/net/ipv4/conf/vmbr0/proxy_arp
+
+auto vmbr1
+iface vmbr1 inet static
+    # This is the static *VM* subnet for containers
+    address 192.168.10.244/24
+    bridge_ports enp94s0f1
+    bridge_stp off
+    bridge_maxwait 0
+    bridge_fd 0
+    bridge-maxwait 0
+    post-up echo 1 > /proc/sys/net/ipv4/conf/vmbr1/proxy_arp
+
+source /etc/network/interfaces.d/*
+
+route add -net 192.168.10.0 netmask 255.255.255.0 gw 192.168.10.1 dev vmbr1
+route delete -net 192.168.10.0 gw 0.0.0.0 netmask 255.255.255.0 dev vmbr1
+route del -net 0.0.0.0 gw 192.168.178.1 netmask 0.0.0.0 dev eth0
+/etc/init.d/networking restart
+
+
+
+uto enp216s0f0
+iface enp216s0f0 inet manual
+
+iface enp216s0f1 inet manual
+
+auto vmbr0
+iface vmbr0 inet static
+	address 10.10.10.13/24
+	gateway 10.10.10.1
+	bridge-ports enp94s0f0
+	bridge-stp off
+	bridge-fd 0
+
+auto vmbr1
+iface vmbr1 inet static
+	address 192.168.10.246/24
+	bridge-ports enp216s0f0
+	bridge-stp off
+	bridge-fd 0
+	bridge-vlan-aware yes
+	bridge-vids 2-4094
+	up route add -net 192.168.10.0 netmask 255.255.255.0 gw 192.168.10.1
+	down route del -net 192.168.10.0 netmask 255.255.255.0 gw 192.168.10.1
+
+
+    

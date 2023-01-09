@@ -1,0 +1,47 @@
+#!/bin/bash
+## /etc/firewall.sh
+set -e
+
+PRIVATE_SUBNET=192.168.10.0/24
+PUBLIC_INTERFACE=vmbr0
+PRIVATE_INTERFACE=vmbr1
+
+PROXY_CONTAINER=192.168.10.244
+
+exe() { ( echo "## $*"; $*; ) }
+
+reset() {
+  exe iptables -P INPUT ACCEPT
+  exe iptables -P FORWARD ACCEPT
+  exe iptables -P OUTPUT ACCEPT
+  exe iptables -t nat -F
+  exe iptables -t mangle -F
+  exe iptables -F
+  exe iptables -X
+}
+
+masquerade() {
+  echo 1 > /proc/sys/net/ipv4/ip_forward
+  exe iptables -t nat -A POSTROUTING -s $PRIVATE_SUBNET -o $PUBLIC_INTERFACE -j MASQUERADE
+}
+
+port_forward() {
+  if [ "$#" -ne 3 ]; then
+    echo "Specify arguments: SOURCE_PORT DEST_HOST DEST_PORT"
+    exit 1
+  fi
+  SOURCE_PORT=$1; DEST_HOST=$2; DEST_PORT=$3;
+  exe iptables -t nat -A PREROUTING -p tcp -i $PUBLIC_INTERFACE \
+      --dport $SOURCE_PORT -j DNAT --to-destination $DEST_HOST:$DEST_PORT
+  exe iptables -A FORWARD -p tcp -d $DEST_HOST \
+      --dport $SOURCE_PORT -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+}
+
+## Reset all rules:
+reset
+
+## IP Masquerading for entire subnet:
+masquerade
+
+## pet ssh server inside a container exposed publicly on port 2222 :
+port_forward 2222 $PROXY_CONTAINER 22

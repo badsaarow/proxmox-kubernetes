@@ -1,0 +1,140 @@
+auto vmbr0
+iface vmbr0 inet static
+        bridge-ports enp94s0f0
+        bridge-stp off
+        bridge-fd 0
+        bridge-vlan-aware yes
+        bridge-vids 10 192
+
+auto vmbr0.10
+iface vmbr0.10 inet static
+        address 10.10.10.13/24
+        gateway 10.10.10.1
+
+auto vmbr0.192
+iface vmbr0.192 inet static
+        address 192.168.10.246/24
+
+---
+
+auto vmbr0
+iface vmbr0 inet static
+        address 10.10.10.13/24
+        gateway 10.10.10.1
+        bridge-ports enp94s0f0
+        bridge-stp off
+        bridge-fd 0
+
+auto vmbr1
+iface vmbr1 inet static
+        address 192.168.10.246/24
+        #bridge-ports enp216s0f0
+        #bridge-ports none
+        bridge-ports enp94s0f0
+        bridge-stp off
+        bridge-fd 0
+        bridge-vlan-aware yes
+        bridge-vids 192
+        #post-up /etc/firewall.sh
+        #bridge-vlan-aware yes
+        #bridge-vids 2-4094
+        #up route add -net 192.168.10.0 netmask 255.255.255.0 gw 192.168.10.1
+        #down route del -net 192.168.10.0 netmask 255.255.255.0 gw 192.168.10.1
+
+source /etc/network/interfaces.d/*
+~
+
+----
+auto vmbr0
+iface vmbr0 inet static
+        address 10.10.10.11/24
+        gateway 10.10.10.1
+        bridge-ports enp94s0f0
+        bridge-stp off
+        bridge-fd 0
+
+auto vmbr1
+iface vmbr1 inet static
+        address 192.168.10.244/24
+        bridge-ports none
+        bridge-stp off
+        bridge-fd 0
+        post-up /etc/firewall.sh
+
+source /etc/network/interfaces.d/*
+~
+
+----
+
+auto vmbr0
+iface vmbr0 inet static
+        bridge-ports enp94s0f0
+        bridge-stp off
+        bridge-fd 0
+        bridge-vlan-aware yes
+        bridge-vids 10 192
+
+auto vmbr0.10
+iface vmbr0.10 inet static
+        address 10.10.10.11/24
+        gateway 10.10.10.1
+
+auto vmbr0.192
+iface vmbr0.192 inet static
+        address 192.168.10.244/24
+
+
+-----------2
+auto vmbr0
+iface vmbr0 inet static
+        address 10.10.10.12/24
+        gateway 10.10.10.1
+        bridge-ports enp94s0f0
+        bridge-stp off
+        bridge-fd 0
+
+auto vmbr1
+iface vmbr1 inet static
+        address 192.168.10.245/24
+        #gateway 192.168.10.1
+        #bridge-ports enp216s0f0
+        bridge-ports none
+        bridge-stp off
+        bridge-fd 0
+        post-up /etc/firewall.sh
+-------------
+auto vmbr0
+iface vmbr0 inet static
+        bridge-ports enp94s0f0
+        bridge-stp off
+        bridge-fd 0
+        bridge-vlan-aware yes
+        bridge-vids 10 192
+
+auto vmbr0.10
+iface vmbr0.10 inet static
+        address 10.10.10.12/24
+        gateway 10.10.10.1
+
+auto vmbr0.192
+iface vmbr0.192 inet static
+        address 192.168.10.245/24
+
+
+--internal ex
+auto vmbr0
+iface vmbr0 inet static
+        bridge-ports enp94s0f0
+        bridge-stp off
+        bridge-fd 0
+        bridge-vlan-aware yes
+        bridge-vids 20 192
+
+auto vmbr0.20
+iface vmbr0.20 inet static
+        address 10.10.20.12/24
+        gateway 10.10.20.1
+
+auto vmbr0.192
+iface vmbr0.192 inet static
+        address 192.168.20.245/24
