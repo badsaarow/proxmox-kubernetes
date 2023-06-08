@@ -50,7 +50,7 @@ echo \
     $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 sudo apt update
 sudo apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
-sudo usermod -aG docker terraform-prov
+sudo usermod -aG docker terraform
 sudo passwd root
 
 proxmox-install-docker:

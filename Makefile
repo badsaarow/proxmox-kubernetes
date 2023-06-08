@@ -9,6 +9,8 @@ all:
 	@echo use parameter
 	@exit -1
 
+
+
 .PHONY: proxmox-add-ssh-key
 proxmox-add-ssh-key:
 	ssh-copy-id -f -i $(ROOT_SSH_KEY_FILE) -o "IdentityFile /root/root.pem" root@$(PVE1_IP)
@@ -17,12 +19,12 @@ proxmox-add-ssh-key:
 
 .PHONY: proxmox-push-root-key
 proxmox-push-root-key:
-	scp -i $(ROOT_SSH_KEY_FILE) terraform/root_rsa root@$(PVE1_IP):/root/.ssh/id_rsa
-	scp -i $(ROOT_SSH_KEY_FILE) terraform/root_rsa.pub root@$(PVE1_IP):/root/.ssh/id_rsa.pub
-	scp -i $(ROOT_SSH_KEY_FILE) terraform/root_rsa root@$(PVE2_IP):/root/.ssh/id_rsa
-	scp -i $(ROOT_SSH_KEY_FILE) terraform/root_rsa.pub root@$(PVE2_IP):/root/.ssh/id_rsa.pub
-	scp -i $(ROOT_SSH_KEY_FILE) terraform/root_rsa root@$(PVE3_IP):/root/.ssh/id_rsa
-	scp -i $(ROOT_SSH_KEY_FILE) terraform/root_rsa.pub root@$(PVE3_IP):/root/.ssh/id_rsa.pub
+	scp -i $(ROOT_SSH_KEY_FILE) root_rsa root@$(PVE1_IP):/root/.ssh/id_rsa
+	scp -i $(ROOT_SSH_KEY_FILE) root_rsa.pub root@$(PVE1_IP):/root/.ssh/id_rsa.pub
+	scp -i $(ROOT_SSH_KEY_FILE) root_rsa root@$(PVE2_IP):/root/.ssh/id_rsa
+	scp -i $(ROOT_SSH_KEY_FILE) root_rsa.pub root@$(PVE2_IP):/root/.ssh/id_rsa.pub
+	scp -i $(ROOT_SSH_KEY_FILE) root_rsa root@$(PVE3_IP):/root/.ssh/id_rsa
+	scp -i $(ROOT_SSH_KEY_FILE) root_rsa.pub root@$(PVE3_IP):/root/.ssh/id_rsa.pub
 
 .PHONY: proxmox-add-user
 proxmox-add-user:
@@ -32,18 +34,45 @@ proxmox-add-user:
 
 .PHONY: change-password
 change-password:
-	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"echo "$(USER):$(PASSWD)" | chpasswd"'
-	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"echo "$(USER):$(PASSWD)" | chpasswd"'
-	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"echo "$(USER):$(PASSWD)" | chpasswd"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"echo "$(USER):$(PASSWD)" | chpasswd"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"echo "$(USER):$(PASSWD)" | chpasswd"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"echo "$(USER):$(PASSWD)" | chpasswd"'
+
+.PHONY: proxmox-off-pve-apt
+proxmox-off-pve-apt:
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"true > /etc/apt/sources.list.d/pve-enterprise.list"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"true > /etc/apt/sources.list.d/pve-enterprise.list"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"true > /etc/apt/sources.list.d/pve-enterprise.list"'
+
+.PHONY: proxmox-apt-upgrade
+proxmox-apt-upgrade:
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"apt-get update && apt-get upgrade -y"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"apt-get update && apt-get upgrade -y"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"apt-get update && apt-get upgrade -y"'
+  
+.PHONY: proxmox-install-tailscale
+proxmox-install-tailscale:
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"curl -fsSL https://tailscale.com/install.sh | bash"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"tailscale up --authkey tskey-auth-k1nmfd5CNTRL-54nFerRdmnHGqW3uLfJKqHMFs1s1WYu35"'
+
+
+define CREATE_TF_USER
+pveum role add Terraform -privs \"VM.Allocate VM.Console VM.Clone VM.Config.CDROM VM.Config.CPU VM.Config.Cloudinit VM.Config.Disk VM.Config.HWType VM.Config.Memory VM.Config.Network VM.Config.Options VM.Monitor VM.Audit VM.PowerMgmt Pool.Allocate Datastore.AllocateSpace Datastore.Audit\" \
+&& pveum user add terraform@pve && pveum aclmod / -user terraform@pve -role Terraform
+endef
 
 define UPDATE_TF_USER
-pveum role modify TerraformProv -privs \"VM.Allocate VM.Console VM.Clone VM.Config.CDROM VM.Config.CPU VM.Config.Cloudinit VM.Config.Disk VM.Config.HWType VM.Config.Memory VM.Config.Network VM.Config.Options VM.Monitor VM.Audit VM.PowerMgmt Pool.Allocate Datastore.AllocateSpace Datastore.Audit\" \
-&& pveum aclmod / -user terraform-prov@pve -role TerraformProv
+pveum role modify Terraform -privs \"VM.Allocate VM.Console VM.Clone VM.Config.CDROM VM.Config.CPU VM.Config.Cloudinit VM.Config.Disk VM.Config.HWType VM.Config.Memory VM.Config.Network VM.Config.Options VM.Monitor VM.Audit VM.PowerMgmt Pool.Allocate Datastore.AllocateSpace Datastore.Audit\" \
+&& pveum user add terraform@pve && pveum aclmod / -user terraform@pve -role Terraform
 endef
+
+.PHONY: proxmox-terraform-create
+proxmox-terraform-create:
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"$(CREATE_TF_USER)"'
 
 .PHONY: proxmox-terraform-update
 proxmox-terraform-update:
-	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"$(UPDATE_TF_USER)"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"$(UPDATE_TF_USER)"'
 
 .PHONY: proxmox-terraform-add-id
 proxmox-terraform-add-id:
@@ -78,17 +107,7 @@ proxmox-copy-net-config:
 	scp -i $(TERRAFORM_SSH_KEY_FILE) ./ansible/roles/common/templates/interfaces.j2 $(USER)@$(PVE3_IP):/home/$(USER)/
 	scp -i $(TERRAFORM_SSH_KEY_FILE) ./ansible/roles/common/templates/firewall.sh.j2 $(USER)@$(PVE3_IP):/home/$(USER)/
 
-.PHONY: proxmox-off-pve-apt
-proxmox-off-pve-apt:
-	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"true > /etc/apt/sources.list.d/pve-enterprise.list"'
-	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"true > /etc/apt/sources.list.d/pve-enterprise.list"'
-	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"true > /etc/apt/sources.list.d/pve-enterprise.list"'
 
-.PHONY: proxmox-apt-upgrade
-proxmox-apt-upgrade:
-	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"apt-get update && apt-get upgrade -y"'
-	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"apt-get update && apt-get upgrade -y"'
-	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"apt-get update && apt-get upgrade -y"'
 
 .PHONY: proxmox-init-ansible
 proxmox-init-ansible:
@@ -135,7 +154,7 @@ restart-service:
 .PHONY: proxmox-terraform-del
 proxmox-terraform-del:
 	ssh -v -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) \
-	bash -c '"pveum user del terraform-prov@pve && pveum role del TerraformProv"'
+	bash -c '"pveum user del terraform@pve && pveum role del TerraformProv"'
 
 
 

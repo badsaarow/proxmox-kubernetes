@@ -40,7 +40,7 @@ resource "proxmox_vm_qemu" "kube-master" {
   scsihw     = "virtio-scsi-pci"
   os_type    = "cloud-init"
   ipconfig0  = "ip=${each.value.cidr},gw=${each.value.gw}"
-  ciuser     = "terraform-prov"
+  ciuser     = "terraform"
   cipassword = yamldecode(data.local_file.secrets.content).user_password
   # cipassword   = "**********" # un-comment after creation
 

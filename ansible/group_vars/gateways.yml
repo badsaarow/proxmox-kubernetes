@@ -1,1 +1,1 @@
-ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q terraform-prov@pve"'
+ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q terraform@pve"'

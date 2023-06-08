@@ -7,5 +7,5 @@
 cat /root/.env
 echo $PASSWD
 echo "root:$PASSWD" | chpasswd
-adduser --quiet --disabled-password --shell /bin/bash --home /home/terraform-prov --ingroup sudo --gecos User terraform-prov
-echo "terraform-prov:$PASSWD" | chpasswd
+adduser --quiet --disabled-password --shell /bin/bash --home /home/terraform --ingroup sudo --gecos User terraform
+echo "terraform:$PASSWD" | chpasswd

@@ -46,8 +46,8 @@ The passwords and SSH keys used by Terraform are retrieved from the `terraform/.
 openssl rand -base64 24
 
 # Create a RSA ssh key in PEM format with comment and file path
-ssh-keygen -t rsa -b 4096 -N "" -C "$USERNAME@$DOMAIN" -m pem -f "$PRIVATE_KEY"
-ssh-keygen -t rsa -b 4096 -N "" -C "terraform-prov@pve" -m pem -f terraform-prov-rsa
+ssh-keygen -t rsa -b 4096 -N "" -C "root@pve" -m pem -f root_rsa
+ssh-keygen -t rsa -b 4096 -N "" -C "terraform@pve" -m pem -f terraform_rsa
 ```
 
 For the full list of required passwords and SSH keys, you may refer to the below sample configuration.
@@ -129,13 +129,13 @@ Provision all the machines using Terraform.
 - https://github.com/Telmate/terraform-provider-proxmox/blob/master/docs/index.md
 
 Create a new role for the future terraform user.
-Create the user "terraform-prov@pve"
-Add the TERRAFORM-PROV role to the terraform-prov user
+Create the user "terraform@pve"
+Add the TERRAFORM-PROV role to the terraform user
 Create admin-pool and k8s-pool
 
 When make API Token, should uncheck **Privilege Segregation**
 ```
-export PM_USER="terraform-prov@pve"
+export PM_USER="terraform@pve"
 export PM_PASS="password"
 ```
 
@@ -148,7 +148,7 @@ terraform init
 
 # Set the one-time password for Proxmox API authentication
 export PM_OTP=""
-export PM_API_TOKEN_ID="terraform-prov@pve!terraform"
+export PM_API_TOKEN_ID="terraform@pve!terraform"
 export PM_API_TOKEN_SECRET="3da67423-d40a-4265-85d4-432ee4248839"
 
 # Check the resources to be created (optional)
