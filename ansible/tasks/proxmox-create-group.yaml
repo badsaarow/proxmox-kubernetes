@@ -10,13 +10,20 @@
         pveum user modify root@pam -group admin
         pveum pool add admin-pool --comment "Admin pool"
         pveum acl modify /pool/admin-pool/ -group admin -role PVEAdmin
+      ignore_errors: yes
+      register: result
     - name: Create k8s Pool
       shell: |
-        pveum role add TerraformProv -privs \
+        pveum role add Terraform -privs \
         "VM.Allocate VM.Console VM.Clone VM.Config.CDROM VM.Config.CPU VM.Config.Cloudinit VM.Config.Disk VM.Config.HWType VM.Config.Memory VM.Config.Network VM.Config.Options VM.Monitor VM.Audit VM.PowerMgmt Datastore.AllocateSpace Datastore.Audit Pool.Allocate"
         pveum user add terraform@pve -group k8s
         pveum group add k8s -comment "k8s"
         pveum pool add k8s-pool --comment "k8s pool"
-        pveum acl modify / -user terraform@pve -role TerraformProv
-        pveum acl modify / -group k8s -role TerraformProv
-        pveum acl modify /pool/k8s-pool/ -group k8s -role TerraformProv
+        pveum acl modify / -user terraform@pve -role Terraform
+        pveum acl modify / -group k8s -role Terraform
+        pveum acl modify /pool/k8s-pool/ -group k8s -role Terraform
+      ignore_errors: yes
+      register: result
+    - name: Display the stderr of the command
+      debug:
+        var: result.stderr_lines

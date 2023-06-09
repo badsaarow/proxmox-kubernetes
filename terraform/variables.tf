@@ -1,7 +1,7 @@
 variable "common" {
   type = map(string)
   default = {
-    os_template   = "local:vztmpl/ubutu-lxc-22.04-1.tar.gz"
+    os_template   = "local:vztmpl/ubutu-lxc-22.04-2.tar.gz"
     os_type       = "ubuntu"
     nameserver    = "8.8.8.8"
   }

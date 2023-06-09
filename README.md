@@ -50,8 +50,7 @@ ssh-keygen -t rsa -b 4096 -N "" -C "root@pve" -m pem -f root_rsa
 ssh-keygen -t rsa -b 4096 -N "" -C "terraform@pve" -m pem -f terraform_rsa
 ```
 
-For the full list of required passwords and SSH keys, you may refer to the below sample configuration.
-
+For the full list of required passwords and SSH keys, terraform/.terraform_secret.yaml
 ```yaml
 # Proxmox API host URL
 pm_api_url: https://<api_host>:8006/api2/json
@@ -88,7 +87,8 @@ LXC [containers](https://pve.proxmox.com/wiki/Linux_Container) are used to creat
 pveam update
 
 # Download the ubuntu container template
-pveam download local ubuntu-22.04-standard_22.04-1_amd64.tar.zst
+pveam download local ubuntu-22.04-standard_22.04-2_amd64.tar.zst
+ 22.04.2 LTS
 ```
 
 ## Cloud-init Template

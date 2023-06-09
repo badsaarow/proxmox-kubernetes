@@ -1,0 +1,20 @@
+---
+- name: Create Cluster
+  hosts: pve1
+  remote_user: root
+  gather_facts: yes
+  tasks:
+  - name: create cluster
+    shell: |
+      pvecm create staging
+      pvecm status
+
+- name: join Cluster
+  hosts: pve2, pve3
+  remote_user: root
+  gather_facts: yes
+  tasks:
+  - name: join cluster
+    shell: |
+      pvecm add 192.168.1.11
+      pvecm status

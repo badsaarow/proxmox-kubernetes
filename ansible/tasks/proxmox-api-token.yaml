@@ -1,0 +1,16 @@
+---
+- name: API token (안됨. WebUI 에서 수동으로 해야 함)
+  hosts: pve1
+  remote_user: root
+  gather_facts: yes
+  tasks:
+  - name: Generate API Token
+    shell: |
+      curl --silent --insecure --data "username=terraform@pve&password=IamABoyAreYouAGirl" \
+      https://localhost:8006/api2/json/access/ticket\
+      | jq --raw-output '.data.ticket' | sed 's/^/PVEAuthCookie=/' > cookie
+    register: result
+  - name: Display the stdout of the command
+    debug:
+      var: result.stdout_lines
+

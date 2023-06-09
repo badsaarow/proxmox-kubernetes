@@ -1,0 +1,16 @@
+---
+- name: Add hosts to /etc/hosts
+  hosts: proxmox
+  become: True
+  become_user: root
+  tasks:
+  - name: Add hosts to /etc/hosts
+    lineinfile:
+      dest: /etc/hosts
+      line: "{{ host_ip }} {{ host_name }}"
+      state: present
+    with_items: "{{ groups['proxmox'] }}"
+    when: inventory_hostname != item
+    vars:
+      host_ip: "{{ hostvars[item]['ansible_host'] }}"
+      host_name: "{{ item }}"

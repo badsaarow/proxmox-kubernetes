@@ -19,7 +19,6 @@
       - curl
       - wget
       - git
-      - zsh
       - build-essential
       - ca-certificates
       - lsb-release
@@ -30,6 +29,7 @@
       - ifupdown2
       - network-manager
       - libguestfs-tools
+      - jq
       # proxmox's dpkg has no fix-broken  option
       # dpkg_options: 'fix-broken'
       state: latest
