@@ -1,0 +1,7 @@
+---
+proxmox:
+  hosts:
+    pve2:
+      ansible_host: pvenode02.mau-sailfin.ts.net
+    pve3:
+      ansible_host: pvenode03.mau-sailfin.ts.net

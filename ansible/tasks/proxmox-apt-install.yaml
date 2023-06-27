@@ -32,8 +32,8 @@
       - jq
       # proxmox's dpkg has no fix-broken  option
       # dpkg_options: 'fix-broken'
-      state: latest
-      fail_on_autoremove: yes
+      # update_cache: yes
+      # state: latest
 
   - name: update network interfaces
     shell: echo "source /etc/network/interfaces.d/*" | tee >> /etc/network/interfaces

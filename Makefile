@@ -9,15 +9,15 @@ all:
 
 .PHONY: proxmox-add-ssh-key
 proxmox-add-ssh-key:
-	ssh-copy-id -f -i $(ROOT_SSH_KEY_FILE) -o "IdentityFile /root/root.pem" root@$(PVE1_IP)
+	# ssh-copy-id -f -i $(ROOT_SSH_KEY_FILE) -o "IdentityFile /root/root.pem" root@$(PVE1_IP)
 	ssh-copy-id -f -i $(ROOT_SSH_KEY_FILE) -o "IdentityFile /root/root.pem" root@$(PVE2_IP)
 	ssh-copy-id -f -i $(ROOT_SSH_KEY_FILE) -o "IdentityFile /root/root.pem" root@$(PVE3_IP)
 
 ## No need to enter password
 .PHONY: proxmox-push-root-key
 proxmox-push-root-key:
-	scp -i $(ROOT_SSH_KEY_FILE) root_rsa root@$(PVE1_IP):/root/.ssh/id_rsa
-	scp -i $(ROOT_SSH_KEY_FILE) root_rsa.pub root@$(PVE1_IP):/root/.ssh/id_rsa.pub
+	# scp -i $(ROOT_SSH_KEY_FILE) root_rsa root@$(PVE1_IP):/root/.ssh/id_rsa
+	# scp -i $(ROOT_SSH_KEY_FILE) root_rsa.pub root@$(PVE1_IP):/root/.ssh/id_rsa.pub
 	scp -i $(ROOT_SSH_KEY_FILE) root_rsa root@$(PVE2_IP):/root/.ssh/id_rsa
 	scp -i $(ROOT_SSH_KEY_FILE) root_rsa.pub root@$(PVE2_IP):/root/.ssh/id_rsa.pub
 	scp -i $(ROOT_SSH_KEY_FILE) root_rsa root@$(PVE3_IP):/root/.ssh/id_rsa
@@ -25,25 +25,25 @@ proxmox-push-root-key:
 
 .PHONY: proxmox-add-user
 proxmox-add-user:
-	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"adduser --quiet --disabled-password --shell /bin/bash --home /home/$(USER) --ingroup "sudo" --gecos "User" $(USER); echo $(USER):"$(PASSWD)" | /usr/sbin/chpasswd"'
+	# ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"adduser --quiet --disabled-password --shell /bin/bash --home /home/$(USER) --ingroup "sudo" --gecos "User" $(USER); echo $(USER):"$(PASSWD)" | /usr/sbin/chpasswd"'
 	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"adduser --quiet --disabled-password --shell /bin/bash --home /home/$(USER) --ingroup "sudo" --gecos "User" $(USER); echo $(USER):"$(PASSWD)" | /usr/sbin/chpasswd"'
 	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"adduser --quiet --disabled-password --shell /bin/bash --home /home/$(USER) --ingroup "sudo" --gecos "User" $(USER); echo $(USER):"$(PASSWD)" | /usr/sbin/chpasswd"'
 
 .PHONY: change-password
 change-password:
-	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"echo $(USER):"$(PASSWD)" | /usr/sbin/chpasswd"'
+	# ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"echo $(USER):"$(PASSWD)" | /usr/sbin/chpasswd"'
 	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"echo $(USER):"$(PASSWD)" | /usr/sbin/chpasswd"'
 	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"echo $(USER):"$(PASSWD)" | /usr/sbin/chpasswd"'
 
 .PHONY: proxmox-off-pve-apt
 proxmox-off-pve-apt:
-	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"true > /etc/apt/sources.list.d/pve-enterprise.list;true > /etc/apt/sources.list.d/ceph.list"'
+	# ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"true > /etc/apt/sources.list.d/pve-enterprise.list;true > /etc/apt/sources.list.d/ceph.list"'
 	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"true > /etc/apt/sources.list.d/pve-enterprise.list;true > /etc/apt/sources.list.d/ceph.list"'
 	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"true > /etc/apt/sources.list.d/pve-enterprise.list;true > /etc/apt/sources.list.d/ceph.list"'
 
 .PHONY: proxmox-apt-upgrade
 proxmox-apt-upgrade:
-	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"apt-get update && apt-get upgrade -y"'
+	# ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"apt-get update && apt-get upgrade -y"'
 	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"apt-get update && apt-get upgrade -y"'
 	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"apt-get update && apt-get upgrade -y"'
 
@@ -65,20 +65,20 @@ endef
 
 .PHONY: proxmox-terraform-create
 proxmox-terraform-create:
-	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"$(CREATE_TF_USER)"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"$(CREATE_TF_USER)"'
 
 .PHONY: proxmox-terraform-update
 proxmox-terraform-update:
-	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"$(UPDATE_TF_USER)"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"$(UPDATE_TF_USER)"'
 
 
 .PHONY: proxmox-terraform-copy-key
 proxmox-terraform-copy-key:
-	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"rm -rf /home/terraform/.ssh;mkdir -p /home/terraform/.ssh"'
-	scp -i $(ROOT_SSH_KEY_FILE) terraform_rsa root@$(PVE1_IP):/home/terraform/.ssh/id_rsa
-	scp -i $(ROOT_SSH_KEY_FILE) terraform_rsa.pub root@$(PVE1_IP):/home/terraform/.ssh/id_rsa.pub
-	scp -i $(ROOT_SSH_KEY_FILE) terraform_rsa.pub root@$(PVE1_IP):/home/terraform/.ssh/authorized_keys
-	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"chown -R terraform /home/terraform/.ssh && chmod 700 /home/terraform/.ssh && chmod 600 /home/terraform/.ssh/id_rsa && chmod 644 /home/terraform/.ssh/id_rsa.pub"'
+	# ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"rm -rf /home/terraform/.ssh;mkdir -p /home/terraform/.ssh"'
+	# scp -i $(ROOT_SSH_KEY_FILE) terraform_rsa root@$(PVE1_IP):/home/terraform/.ssh/id_rsa
+	# scp -i $(ROOT_SSH_KEY_FILE) terraform_rsa.pub root@$(PVE1_IP):/home/terraform/.ssh/id_rsa.pub
+	# scp -i $(ROOT_SSH_KEY_FILE) terraform_rsa.pub root@$(PVE1_IP):/home/terraform/.ssh/authorized_keys
+	# ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"chown -R terraform /home/terraform/.ssh && chmod 700 /home/terraform/.ssh && chmod 600 /home/terraform/.ssh/id_rsa && chmod 644 /home/terraform/.ssh/id_rsa.pub"'
 	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"rm -rf /home/terraform/.ssh;mkdir -p /home/terraform/.ssh"'
 	scp -i $(ROOT_SSH_KEY_FILE) terraform_rsa root@$(PVE2_IP):/home/terraform/.ssh/id_rsa
 	scp -i $(ROOT_SSH_KEY_FILE) terraform_rsa.pub root@$(PVE2_IP):/home/terraform/.ssh/id_rsa.pub
@@ -107,27 +107,32 @@ proxmox-init-ansible:
 # workaround for error - No module named 'distutils.cmd'
 # proxmox's python3.9 has no distutils
 # ansible needs python3 and pip3
-	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"apt-get install -y python3.9-distutils && curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python3 get-pip.py && pip3 install --ignore-installed ansible"'
-	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"apt-get install -y python3.9-distutils && curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python3 get-pip.py && pip3 install --ignore-installed ansible"'
-	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"apt-get install -y python3.9-distutils && curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python3 get-pip.py && pip3 install --ignore-installed ansible"'
+	# ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"apt-get install -y python3.9-distutils && curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python3 get-pip.py && pip3 install --ignore-installed ansible"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"apt-get install -y python3.11 && curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python3 get-pip.py && pip3 install --ignore-installed ansible"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"apt-get install -y python3.11 && curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python3 get-pip.py && pip3 install --ignore-installed ansible"'
+
+.PHONY: apt-update-upgrade
+apt-update-upgrade:
+	ansible-playbook -i ./ansible/inventories/inventory-sk-pve.yaml ./ansible/tasks/update_upgrade.yaml -u root --private-key $(ROOT_SSH_KEY_FILE)
 
 .PHONY: proxmox-apt-install
 proxmox-apt-install:
-	ansible-playbook -i ./ansible/inventories/inventory-proxmox.yaml ./ansible/tasks/proxmox-apt-install.yaml -u root --private-key $(ROOT_SSH_KEY_FILE)
+	ansible-playbook -i ./ansible/inventories/inventory-sk-pve.yaml ./ansible/tasks/proxmox-apt-install.yaml -u root --private-key $(ROOT_SSH_KEY_FILE)
 
 
 .PHONY: proxmox-create-group
 proxmox-create-group:
-	ansible-playbook -i ./ansible/inventories/inventory-proxmox.yaml ./ansible/tasks/proxmox-create-group.yaml -u root  --private-key $(ROOT_SSH_KEY_FILE) -v
+	ansible-playbook -i ./ansible/inventories/inventory-sk-pve.yaml ./ansible/tasks/proxmox-create-group.yaml -u root  --private-key $(ROOT_SSH_KEY_FILE) -v
 
 .PHONY: proxmox-add-hosts
 proxmox-add-hosts:
-	ansible-playbook -i ./ansible/inventories/inventory-proxmox.yaml ./ansible/tasks/proxmox-add-hosts.yaml -u root  --private-key $(ROOT_SSH_KEY_FILE) -v
+	ansible-playbook -i ./ansible/inventories/inventory-sk-pve.yaml ./ansible/tasks/proxmox-add-hosts.yaml -u root  --private-key $(ROOT_SSH_KEY_FILE) -v
 
 
+# fail to create cluster using CLI
 .PHONY: proxmox-create-cluster
 proxmox-create-cluster:
-	ansible-playbook -i ./ansible/inventories/inventory-proxmox.yaml ./ansible/tasks/proxmox-create-cluster.yaml -u root  --private-key $(ROOT_SSH_KEY_FILE) -vvv
+	# ansible-playbook -i ./ansible/inventories/inventory-sk-pve.yaml ./ansible/tasks/proxmox-create-cluster.yaml -u root  --private-key $(ROOT_SSH_KEY_FILE) -vvv
 
 # Manually issue API token on Web UI
 
@@ -146,7 +151,7 @@ reboot:
 	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"reboot"'
 	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"reboot"'
 	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"reboot"'
-	# ansible-playbook -i ./ansible/tasks/inventory-proxmox.yaml ./ansible/tasks/reboot.yaml -u root --private-key $(ROOT_SSH_KEY_FILE)
+	# ansible-playbook -i ./ansible/tasks/inventory-sk-pve.yaml ./ansible/tasks/reboot.yaml -u root --private-key $(ROOT_SSH_KEY_FILE)
 
 .PHONY: restart-service
 restart-service:

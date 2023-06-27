@@ -30,6 +30,7 @@
       - network-manager
       dpkg_options: 'fix-broken'
       state: latest
+      auto_upgrade: yes
       fail_on_autoremove: yes
 
   - name: update network interfaces
