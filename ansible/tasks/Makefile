@@ -4,8 +4,8 @@ all:
 
 
 proxmox-off-pve-apt:
-		ssh -v -i ~/.ssh/id_rsa.pub -t root@192.168.1.6 bash -c '"true > /etc/apt/sources.list.d/pve-enterprise.list"'
-		ssh -v -i ~/.ssh/id_rsa.pub -t root@192.168.1.5 bash -c '"true > /etc/apt/sources.list.d/pve-enterprise.list"'
+		ssh -v -i ~/.ssh/id_rsa.pub -t root@192.168.1.6 bash -c '"true > /etc/apt/sources.list.d/pve-enterprise.list;true > /etc/apt/sources.list.d/ceph.list"'
+		ssh -v -i ~/.ssh/id_rsa.pub -t root@192.168.1.5 bash -c '"true > /etc/apt/sources.list.d/pve-enterprise.list;true > /etc/apt/sources.list.d/ceph.list"'
 
 proxmox-apt-install:
 	ansible-playbook -i ../inventories/inventory-proxmox.yaml proxmox-apt-install.yaml -u root

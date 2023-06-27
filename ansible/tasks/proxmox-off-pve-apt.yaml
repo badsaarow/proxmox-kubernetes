@@ -4,3 +4,5 @@
   tasks:
     - name: "Turn Off checking PVE Enterprise apt"
       shell: true > /etc/apt/sources.list.d/pve-enterprise.list
+    - name: "Turn Off checking ceph apt"
+      shell: true > /etc/apt/sources.list.d/ceph.list

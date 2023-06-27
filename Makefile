@@ -37,9 +37,9 @@ change-password:
 
 .PHONY: proxmox-off-pve-apt
 proxmox-off-pve-apt:
-	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"true > /etc/apt/sources.list.d/pve-enterprise.list"'
-	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"true > /etc/apt/sources.list.d/pve-enterprise.list"'
-	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"true > /etc/apt/sources.list.d/pve-enterprise.list"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE1_IP) bash -c '"true > /etc/apt/sources.list.d/pve-enterprise.list;true > /etc/apt/sources.list.d/ceph.list"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE2_IP) bash -c '"true > /etc/apt/sources.list.d/pve-enterprise.list;true > /etc/apt/sources.list.d/ceph.list"'
+	ssh -i $(ROOT_SSH_KEY_FILE) -t root@$(PVE3_IP) bash -c '"true > /etc/apt/sources.list.d/pve-enterprise.list;true > /etc/apt/sources.list.d/ceph.list"'
 
 .PHONY: proxmox-apt-upgrade
 proxmox-apt-upgrade:
